@@ -27,7 +27,9 @@ export function ModeSelect({
   usernameError,
   isCheckingUsername = false,
 }: ModeSelectProps) {
-  const [activeModal, setActiveModal] = useState<MenuModal>(null)
+  const [activeModal, setActiveModal] = useState<MenuModal>(() =>
+    typeof window !== "undefined" && new URLSearchParams(window.location.search).get("preview") === "support" ? "support" : null
+  )
 
   const handlePlayClick = () => {
     if (isCheckingUsername) return

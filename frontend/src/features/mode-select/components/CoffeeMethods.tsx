@@ -25,22 +25,17 @@ export default function CoffeeMethods() {
           <Icon name="globe" size={20} />
         </span>
         <div className="flex-1 min-w-0">
-          <strong className="block text-sm font-bold tracking-wider uppercase text-white">
+          <strong className="block text-xs sm:text-sm font-bold tracking-wider uppercase text-white truncate">
             PAYPAL // {PAYPAL_EMAIL}
           </strong>
-          <span
-            className={`text-xs block truncate ${
-              copiedMethod === "paypal"
-                ? "text-emerald-400 font-bold"
-                : "text-slate-400"
-            }`}
-          >
-            {copiedMethod === "paypal"
-              ? "✓ EMAIL COPIED TO CLIPBOARD!"
-              : "Send via PayPal app (Click to copy email)"}
-          </span>
         </div>
-        <span className="text-xs font-mono uppercase px-2.5 py-1 rounded border border-sky-500/30 bg-sky-500/10 text-sky-300 shrink-0">
+        <span
+          className={`text-xs font-mono uppercase px-2.5 py-1 rounded border shrink-0 transition-colors ${
+            copiedMethod === "paypal"
+              ? "border-emerald-500/50 bg-emerald-500/20 text-emerald-400 font-bold"
+              : "border-sky-500/30 bg-sky-500/10 text-sky-300"
+          }`}
+        >
           {copiedMethod === "paypal" ? "✓ COPIED" : "COPY EMAIL"}
         </span>
       </div>
@@ -54,22 +49,17 @@ export default function CoffeeMethods() {
           <Icon name="shield" size={20} />
         </span>
         <div className="flex-1 min-w-0">
-          <strong className="block text-sm font-bold tracking-wider uppercase text-white">
-            REDOTPAY // UID: {REDOTPAY_UID}
+          <strong className="block text-xs sm:text-sm font-bold tracking-wider uppercase text-white truncate">
+            REDOTPAY // {REDOTPAY_UID}
           </strong>
-          <span
-            className={`text-xs block truncate ${
-              copiedMethod === "redot"
-                ? "text-emerald-400 font-bold"
-                : "text-slate-400"
-            }`}
-          >
-            {copiedMethod === "redot"
-              ? "✓ REDOTPAY UID COPIED TO CLIPBOARD!"
-              : "0% fee transfer inside RedotPay App (Click to copy UID)"}
-          </span>
         </div>
-        <span className="text-xs font-mono uppercase px-2.5 py-1 rounded border border-rose-500/30 bg-rose-500/10 text-rose-300 shrink-0">
+        <span
+          className={`text-xs font-mono uppercase px-2.5 py-1 rounded border shrink-0 transition-colors ${
+            copiedMethod === "redot"
+              ? "border-emerald-500/50 bg-emerald-500/20 text-emerald-400 font-bold"
+              : "border-rose-500/30 bg-rose-500/10 text-rose-300"
+          }`}
+        >
           {copiedMethod === "redot" ? "✓ COPIED" : "COPY UID"}
         </span>
       </div>
@@ -83,22 +73,17 @@ export default function CoffeeMethods() {
           <Icon name="check" size={20} />
         </span>
         <div className="flex-1 min-w-0">
-          <strong className="block text-sm font-bold tracking-wider uppercase text-white">
-            BARIDIMOB / CCP // ALGÉRIE POSTE
+          <strong className="block text-xs sm:text-sm font-bold tracking-wider uppercase text-white truncate">
+            BARIDIMOB // {BARIDIMOB_RIP}
           </strong>
-          <span
-            className={`text-xs font-mono block truncate ${
-              copiedMethod === "ccp"
-                ? "text-emerald-400 font-bold"
-                : "text-slate-400"
-            }`}
-          >
-            {copiedMethod === "ccp"
-              ? "✓ RIP COPIED TO CLIPBOARD!"
-              : `RIP: ${BARIDIMOB_RIP} (Click to copy)`}
-          </span>
         </div>
-        <span className="text-xs font-mono uppercase px-2.5 py-1 rounded border border-emerald-500/30 bg-emerald-500/10 text-emerald-300 shrink-0">
+        <span
+          className={`text-xs font-mono uppercase px-2.5 py-1 rounded border shrink-0 transition-colors ${
+            copiedMethod === "ccp"
+              ? "border-emerald-500/50 bg-emerald-500/20 text-emerald-400 font-bold"
+              : "border-emerald-500/30 bg-emerald-500/10 text-emerald-300"
+          }`}
+        >
           {copiedMethod === "ccp" ? "✓ COPIED" : "COPY RIP"}
         </span>
       </div>

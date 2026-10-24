@@ -36,10 +36,12 @@ export function bindGameplaySocketEvents({ socket, state, addToast }: GameplaySo
         prev.map((p) => (p.username === data.username ? { ...p, hasGuessed: true } : p)),
       )
     }
-    if (data.username && data.username.toLowerCase() === getStoredUsername().toLowerCase()) {
+    const isMe = data.username && data.username.toLowerCase() === getStoredUsername().toLowerCase()
+    if (isMe) {
       state.setHasGuessed(true)
+    } else if (data.username) {
+      addToast(`⚡ ${data.username} locked in!`, "info")
     }
-    addToast(`Operative "${data.username}" locked in their guess!`, "info")
   })
 
   socket.on("countdown_started", (data: any) => state.setCountdownSeconds(data.seconds))

@@ -19,9 +19,10 @@ export function useToasts() {
       return [...current, { id, message: trimmed, type }]
     })
 
+    const isMobile = typeof window !== "undefined" && window.innerWidth < 768
     setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id))
-    }, 4500)
+    }, isMobile ? 2200 : 3800)
   }, [])
 
   const removeToast = useCallback((id: string) => {

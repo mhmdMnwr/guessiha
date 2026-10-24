@@ -10,7 +10,9 @@ interface SupportDeveloperPanelProps {
 export function SupportDeveloperPanel({
   onBackToPlay,
 }: SupportDeveloperPanelProps) {
-  const [showCoffee, setShowCoffee] = useState(false)
+  const [showCoffee, setShowCoffee] = useState(() =>
+    Boolean(typeof window !== "undefined" && new URLSearchParams(window.location.search).get("preview") === "support")
+  )
 
   return (
     <div className="menu-stage-panel panel">
@@ -77,11 +79,6 @@ export function SupportDeveloperPanel({
             <strong className="block text-sm font-bold tracking-wider uppercase text-white">
               BUY ME A COFFEE
             </strong>
-            <span className="text-xs text-slate-400 block truncate">
-              {showCoffee
-                ? "Select payment channel below"
-                : "PayPal, RedotPay, or BaridiMob (Algérie Poste)"}
-            </span>
           </div>
           <span
             className={`text-amber-400 text-sm font-bold transition-transform duration-200 ${

@@ -18,11 +18,10 @@ export function ToastContainer({ toasts, onDismiss }: ToastContainerProps) {
   return (
     <div
       aria-live="polite"
-      className="fixed inset-x-0 mx-auto w-fit max-w-[min(440px,calc(100vw-32px))] z-[9999] pointer-events-none flex flex-col items-center gap-2 px-3"
-      style={{ top: "calc(var(--sat, 0px) + 10px)" }}
+      className="fixed inset-x-0 mx-auto w-fit max-w-[min(440px,calc(100vw-32px))] z-[9999] pointer-events-none flex flex-col items-center gap-1.5 px-3 top-[calc(var(--sat,0px)+54px)] md:top-[calc(var(--sat,0px)+12px)]"
     >
       {toasts.map((toast, index) => {
-        const isOlderThanTwoOnMobile = index < toasts.length - 2
+        const isOlderThanOneOnMobile = index < toasts.length - 1
         const type = toast.type || "info"
         const borderColor =
           type === "success"
@@ -47,23 +46,28 @@ export function ToastContainer({ toasts, onDismiss }: ToastContainerProps) {
 
         return (
           <div
-            className={`pointer-events-auto items-center gap-2.5 py-2 px-3.5 bg-slate-950/95 border ${borderColor} rounded-full backdrop-blur-xl transition-all shadow-lg animate-in slide-in-from-top-2 duration-200 ${
-              isOlderThanTwoOnMobile ? "hidden md:flex" : "flex"
+            className={`pointer-events-auto items-center gap-2 py-1 px-3 sm:py-2 sm:px-3.5 bg-slate-950/95 border ${borderColor} rounded-full backdrop-blur-xl transition-all shadow-lg animate-in slide-in-from-top-2 duration-200 cursor-pointer ${
+              isOlderThanOneOnMobile ? "hidden md:flex" : "flex"
             }`}
             key={toast.id}
+            onClick={() => onDismiss(toast.id)}
+            role="status"
           >
             <span
-              className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 text-[10px] ${badgeColor}`}
+              className={`w-4 h-4 sm:w-5 sm:h-5 rounded-full flex items-center justify-center shrink-0 text-[9px] sm:text-[10px] ${badgeColor}`}
             >
-              <Icon name={iconName} size={12} />
+              <Icon name={iconName} size={11} />
             </span>
-            <div className="text-xs font-mono font-medium text-slate-100 tracking-wide truncate max-w-[280px] sm:max-w-[340px]">
+            <div className="text-[11px] sm:text-xs font-mono font-medium text-slate-100 tracking-wide truncate max-w-[240px] sm:max-w-[340px]">
               {toast.message}
             </div>
             <button
               aria-label="Dismiss notification"
-              className="text-slate-400 hover:text-white text-xs font-mono p-1 transition-colors shrink-0 cursor-pointer -mr-1"
-              onClick={() => onDismiss(toast.id)}
+              className="text-slate-400 hover:text-white text-xs font-mono p-0.5 transition-colors shrink-0 cursor-pointer"
+              onClick={(e) => {
+                e.stopPropagation()
+                onDismiss(toast.id)
+              }}
               type="button"
             >
               ✕
