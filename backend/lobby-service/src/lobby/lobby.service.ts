@@ -20,7 +20,7 @@ export class LobbyService {
     for (const meta of Array.from(this.lobbies.values())) {
       const roomPlayers = this.players.get(meta.id);
       const count = roomPlayers ? roomPlayers.size : 0;
-      if (count === 0 && meta.id !== 'LAN-01') {
+      if (count === 0) {
         this.deleteLobby(meta.id, 'Squad has 0 members.');
         continue;
       }
@@ -28,7 +28,6 @@ export class LobbyService {
         id: meta.id,
         name: meta.name,
         hostName: meta.hostName,
-        hostIp: meta.hostIp,
         playerCount: count,
         maxPlayers: meta.maxPlayers,
         selectedRegion: meta.selectedRegion,
@@ -44,7 +43,7 @@ export class LobbyService {
     return this.lobbies.get(id) || null;
   }
 
-  async createLobby(dto: CreateLobbyDto, clientIp: string) {
+  async createLobby(dto: CreateLobbyDto, _clientIp?: string) {
     const id = String(Math.floor(100000 + Math.random() * 900000));
     const hostId = `host_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
     const serverEcdh = this.crypto.generateEcdhKeyPair();
@@ -54,7 +53,6 @@ export class LobbyService {
       id,
       name: dto.name || `Squad ${id}`,
       hostId,
-      hostIp: clientIp,
       hostName: dto.hostName || 'SquadLeader',
       maxPlayers: dto.maxPlayers || 8,
       selectedRegion: dto.selectedRegion || 'all',
@@ -67,7 +65,6 @@ export class LobbyService {
     const hostPlayer: LobbyPlayer = {
       id: hostId,
       username: meta.hostName,
-      ip: clientIp,
       isHost: true,
       connected: true,
       clientPublicKeyHex: dto.clientPublicKey,
@@ -95,7 +92,7 @@ export class LobbyService {
     };
   }
 
-  async joinLobby(dto: JoinLobbyDto, clientIp: string) {
+  async joinLobby(dto: JoinLobbyDto, _clientIp?: string) {
     const lobby = this.lobbies.get(dto.roomId);
     if (!lobby) {
       return { success: false, error: 'Lobby not found or already closed.' };
@@ -120,7 +117,6 @@ export class LobbyService {
     const player: LobbyPlayer = {
       id: playerId,
       username: dto.username || 'Operative',
-      ip: clientIp,
       isHost: false,
       connected: true,
       clientPublicKeyHex: dto.clientPublicKey,

@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Socket, Server } from 'socket.io';
 import { GameService } from '../game.service';
 import { CryptoService } from '../../security/crypto.service';
-import { getClientId, getClientIp } from './connection.handler';
+import { getClientId } from './connection.handler';
 import { GameRoom } from '../game.types';
 
 @Injectable()
@@ -15,9 +15,8 @@ export class GuessHandler {
   ) {}
 
   handlePlacePin(socket: Socket, room: GameRoom, data: any) {
-    const ip = getClientIp(socket);
     const clientId = getClientId(socket);
-    const player = room.players[clientId] || room.players[ip];
+    const player = room.players[clientId] || Object.values(room.players).find((p) => p && p.socketId === socket.id);
     if (!player || player.hasGuessed) return;
 
     const lat = parseFloat(data?.lat);
@@ -28,10 +27,9 @@ export class GuessHandler {
   }
 
   handleLockGuess(socket: Socket, server: Server, room: GameRoom, data: any): { ok: boolean; error?: string } {
-    const ip = getClientIp(socket);
     const clientId = getClientId(socket);
     const playerKey = Object.keys(room.players).find(
-      (k) => k === clientId || k === ip || room.players[k]?.socketId === socket.id,
+      (k) => k === clientId || room.players[k]?.socketId === socket.id,
     );
     if (!playerKey) {
       return { ok: false, error: 'Operative not found in this squad.' };

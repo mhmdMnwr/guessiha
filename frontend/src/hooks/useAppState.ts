@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from "react"
 import type {
-  ConnectionMode,
   Screen,
   Room,
   Player,
@@ -30,7 +29,6 @@ import {
 
 export function useAppState() {
   const preview = getPreviewParam()
-  const [selectedMode, setSelectedMode] = useState<ConnectionMode | null>("online")
   const [screen, setScreen] = useState<Screen>(() => getInitialScreen())
 
   const [isLaunching, setIsLaunching] = useState(false)
@@ -81,7 +79,6 @@ export function useAppState() {
   }, [username])
 
   return {
-    selectedMode, setSelectedMode,
     screen, setScreen, updateScreen,
     isLaunching, setIsLaunching,
     clientId,

@@ -12,7 +12,6 @@ import { MatchControlHandler } from './handlers/match-control.handler';
 import { GuessHandler } from './handlers/guess.handler';
 import { HostActionHandler } from './handlers/host-action.handler';
 import { MatchParamsHandler } from './handlers/match-params.handler';
-import { LegacyAdmissionHandler } from './handlers/legacy-admission.handler';
 import { GameParticipationHandler } from './handlers/game-participation.handler';
 import { AdmissionHandler } from './handlers/admission.handler';
 import { CrownElectionHandler } from './handlers/crown-election.handler';
@@ -36,7 +35,6 @@ import { GeoDatabaseModule } from '../geo-database/geo-database.module';
     GuessHandler,
     HostActionHandler,
     MatchParamsHandler,
-    LegacyAdmissionHandler,
     GameParticipationHandler,
     AdmissionHandler,
     CrownElectionHandler,

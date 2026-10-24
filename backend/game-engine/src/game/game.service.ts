@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Server, Socket } from 'socket.io';
+import { Server } from 'socket.io';
 import { GameRoom, Player } from './game.types';
 import { RoomStoreService } from './services/room-store.service';
 import { RoundCoordinatorService } from './services/round-coordinator.service';
@@ -19,10 +19,6 @@ export class GameService {
     private readonly geoDb: GeoDatabaseService,
   ) {}
 
-  get state(): GameRoom {
-    return this.roomStore.state;
-  }
-
   getRoom(roomId?: string): GameRoom | null {
     return this.roomStore.getRoom(roomId);
   }
@@ -31,11 +27,11 @@ export class GameService {
     return this.roomStore.findRoomByPlayer(id);
   }
 
-  ensureActiveHost(room?: GameRoom) {
+  ensureActiveHost(room: GameRoom) {
     return this.roomStore.ensureActiveHost(room);
   }
 
-  getLobbyPlayers(room?: GameRoom) {
+  getLobbyPlayers(room: GameRoom) {
     return this.roomStore.getLobbyPlayers(room);
   }
 
@@ -53,19 +49,15 @@ export class GameService {
     this.roomStore.deleteRoom(id);
   }
 
-  transferHost(room: GameRoom, newHostPlayer: Player, server: Server, previousHostIp?: string) {
+  transferHost(room: GameRoom, newHostPlayer: Player, server: Server) {
     const prevHostName = room.hostName || 'Host';
-    const prevHostIp = previousHostIp || room.hostIp;
-    room.hostIp = newHostPlayer.ip;
     room.hostId = newHostPlayer.id;
     room.hostSocketId = newHostPlayer.socketId;
     room.hostName = newHostPlayer.username;
 
     const payload = {
       previousHost: prevHostName,
-      previousHostIp: prevHostIp,
       newHost: newHostPlayer.username,
-      newHostIp: newHostPlayer.ip,
       newHostId: newHostPlayer.publicId || newHostPlayer.id,
     };
     server.to(room.id).emit('host_transferred', payload);
@@ -75,10 +67,12 @@ export class GameService {
   async startGame(
     senderId: string,
     server: Server,
-    room?: GameRoom,
-    senderIp?: string,
+    room: GameRoom,
   ): Promise<{ success: boolean; error?: string }> {
-    const targetRoom = room || this.state;
+    if (!room) {
+      return { success: false, error: 'Room not found.' };
+    }
+    const targetRoom = room;
     if (targetRoom.status !== 'LOBBY') {
       return { success: false, error: 'Match already active in this room.' };
     }
@@ -91,8 +85,7 @@ export class GameService {
 
     const isAuthorized =
       (targetRoom.hostId && senderId === targetRoom.hostId) ||
-      (targetRoom.hostSocketId && senderId === targetRoom.hostSocketId) ||
-      (!targetRoom.hostId && targetRoom.hostIp && (senderIp === targetRoom.hostIp || senderId === targetRoom.hostIp));
+      (targetRoom.hostSocketId && senderId === targetRoom.hostSocketId);
 
     if (!isAuthorized) {
       return { success: false, error: 'Only the host (Squad Leader) can start the game.' };
@@ -146,16 +139,17 @@ export class GameService {
   stopGame(
     senderId: string,
     server: Server,
-    room?: GameRoom,
-    senderIp?: string,
+    room: GameRoom,
   ): { success: boolean; error?: string } {
-    const targetRoom = room || this.state;
+    if (!room) {
+      return { success: false, error: 'Room not found.' };
+    }
+    const targetRoom = room;
     this.ensureActiveHost(targetRoom);
 
     const isAuthorized =
       (targetRoom.hostId && senderId === targetRoom.hostId) ||
-      (targetRoom.hostSocketId && senderId === targetRoom.hostSocketId) ||
-      (!targetRoom.hostId && targetRoom.hostIp && (senderIp === targetRoom.hostIp || senderId === targetRoom.hostIp));
+      (targetRoom.hostSocketId && senderId === targetRoom.hostSocketId);
 
     if (!isAuthorized) {
       return { success: false, error: 'Only the host (Squad Leader) can stop the game.' };
@@ -180,7 +174,6 @@ export class GameService {
       roomId: targetRoom.id,
       message: 'The squad leader returned the room to Lobby.',
       players: this.getLobbyPlayers(targetRoom),
-      hostIp: targetRoom.hostIp,
       selectedRegion: targetRoom.selectedRegion,
       difficulty: targetRoom.difficulty,
       status: 'LOBBY',
@@ -193,8 +186,9 @@ export class GameService {
     return { success: true };
   }
 
-  broadcastLobbyUpdate(server: Server, room?: GameRoom) {
-    const targetRoom = room || this.state;
+  broadcastLobbyUpdate(server: Server, room: GameRoom) {
+    if (!room) return;
+    const targetRoom = room;
     this.ensureActiveHost(targetRoom);
     server.to(targetRoom.id).emit('lobby_update', {
       roomId: targetRoom.id,
@@ -202,7 +196,6 @@ export class GameService {
       isPrivate: Boolean(targetRoom.isPrivate),
       roomName: targetRoom.name,
       players: this.getLobbyPlayers(targetRoom),
-      hostIp: targetRoom.hostIp,
       hostName: targetRoom.hostName,
       selectedRegion: targetRoom.selectedRegion,
       difficulty: targetRoom.difficulty,

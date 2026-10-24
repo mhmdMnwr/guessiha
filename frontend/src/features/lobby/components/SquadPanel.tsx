@@ -79,7 +79,7 @@ export function SquadPanel({
                     onClick={(e) => {
                       e.stopPropagation()
                       if (window.confirm(`Kick operative "${player.username}" from the squad?`)) {
-                        onKickPlayer(player.id || player.ip)
+                        onKickPlayer(player.id || "")
                       }
                     }}
                     title="Kick Operative"

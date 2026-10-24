@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Socket, Server } from 'socket.io';
 import { GameService } from '../game.service';
 import { CryptoService } from '../../security/crypto.service';
-import { getClientId, getClientIp } from './connection.handler';
+import { getClientId } from './connection.handler';
 import { createPlayer } from '../factories/lobby.factory';
 import { GameRoom } from '../game.types';
 
@@ -18,7 +18,6 @@ export class AdmissionHandler {
     server: Server,
     room: GameRoom,
     clientId: string,
-    ip: string,
     username: string,
     clientPublicKey?: string,
   ) {
@@ -26,7 +25,7 @@ export class AdmissionHandler {
     const isReconnect = Boolean(room.players[clientId]);
     let player = room.players[clientId];
     if (!player) {
-      player = createPlayer(clientId, ip, socket.id, username);
+      player = createPlayer(clientId, socket.id, username);
       room.players[clientId] = player;
     } else {
       player.socketId = socket.id;
@@ -37,7 +36,6 @@ export class AdmissionHandler {
     const isHost = room.hostId === clientId || room.hostSocketId === socket.id;
     if (isHost) {
       room.hostSocketId = socket.id;
-      room.hostIp = ip;
       room.hostId = clientId;
     }
 
@@ -60,7 +58,6 @@ export class AdmissionHandler {
       roomName: room.name,
       hostName: room.hostName,
       isHost: Boolean(isHost),
-      hostIp: room.hostIp,
       maxPlayers: room.maxPlayers,
       role: isHost ? 'HOST' : 'OPERATIVE',
       serverPublicKey,
@@ -107,7 +104,7 @@ export class AdmissionHandler {
       return;
     }
 
-    this.admitPlayer(pendingSocket, server, room, pending.clientId, pending.ip, pending.username, pending.clientPublicKey);
+    this.admitPlayer(pendingSocket, server, room, pending.clientId, pending.username, pending.clientPublicKey);
   }
 
   handleRejectPlayer(socket: Socket, server: Server, data: any) {
@@ -135,6 +132,5 @@ export class AdmissionHandler {
     this.gameService.broadcastLobbyUpdate(server, room);
   }
 
-  getClientIp = getClientIp;
   getClientId = getClientId;
 }

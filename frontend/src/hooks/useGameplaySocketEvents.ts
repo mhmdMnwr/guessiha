@@ -53,7 +53,6 @@ export function bindGameplaySocketEvents({ socket, state, addToast }: GameplaySo
       state.setRoomPlayers(
         data.leaderboard.map((lb: any) => ({
           id: lb.id,
-          ip: lb.ip,
           username: lb.username,
           connected: true,
           totalScore: lb.totalScore || 0,

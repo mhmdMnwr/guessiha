@@ -16,7 +16,6 @@ export class LobbyWatchdog implements OnModuleInit, OnModuleDestroy {
     this.checkInterval = setInterval(async () => {
       const lobbies = this.lobbyService.getAllLobbies();
       for (const lobby of lobbies) {
-        if (lobby.id === 'LAN-01') continue;
         if (lobby.playerCount === 0) {
           await this.lobbyService.deleteLobby(lobby.id, 'Squad has 0 members.');
           continue;

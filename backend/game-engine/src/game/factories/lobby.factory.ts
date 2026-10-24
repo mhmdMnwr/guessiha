@@ -34,7 +34,6 @@ export function createGameRoom(
   id: string,
   name: string,
   hostId: string,
-  hostIp: string,
   hostSocketId: string,
   hostName: string,
   data?: any,
@@ -52,7 +51,6 @@ export function createGameRoom(
     name: safeName,
     status: 'LOBBY',
     hostId,
-    hostIp,
     hostSocketId,
     hostName,
     lastHostUsername: hostName,
@@ -84,14 +82,12 @@ export function createGameRoom(
 
 export function createPlayer(
   id: string,
-  ip: string,
   socketId: string,
   username: string,
 ): Player {
   return {
     id,
     publicId: toPublicPlayerId(id),
-    ip,
     socketId,
     username: sanitizeText(username, 18, 'Operative'),
     connected: true,

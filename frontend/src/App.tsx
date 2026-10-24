@@ -21,9 +21,7 @@ export default function App() {
         <ModeSelect
           isCheckingUsername={state.isCheckingUsername}
           isLaunching={state.isLaunching}
-          mode={state.selectedMode}
           onContinue={actions.handleContinueFromModeSelect}
-          setMode={state.setSelectedMode}
           setUsername={state.setUsername}
           username={state.username}
           usernameError={state.usernameError}

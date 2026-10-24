@@ -4,14 +4,11 @@ import { EffectsLayer } from "../../shared/components/EffectsLayer"
 import { Icon } from "../../shared/components/Icon"
 import { FeedbackPanel } from "./components/FeedbackPanel"
 import { SupportDeveloperPanel } from "./components/SupportDeveloperPanel"
-import type { ConnectionMode } from "../../types/game"
 
 type MenuModal = "feedback" | "support" | null
 
 interface ModeSelectProps {
   isLaunching: boolean
-  mode: ConnectionMode | null
-  setMode: (mode: ConnectionMode) => void
   onContinue: () => void
   username: string
   setUsername: (name: string) => void

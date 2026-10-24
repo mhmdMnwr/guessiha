@@ -38,11 +38,6 @@ export function useGameSocket(
       if (socketRef.current?.connected) {
         socketRef.current.emit("host_heartbeat", { roomId })
       }
-      fetch(`/api/lobbies/${encodeURIComponent(roomId)}/heartbeat`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ hostId: state.clientId }),
-      }).catch(() => {})
     }, 2500)
     return () => clearInterval(interval)
   }, [state.isHost, state.activeRoom?.id, state.clientId])
@@ -55,7 +50,7 @@ export function useGameSocket(
       }
     }
     fetchLobbies()
-    const interval = setInterval(fetchLobbies, 2500)
+    const interval = setInterval(fetchLobbies, 8000)
     return () => clearInterval(interval)
   }, [state.screen])
 

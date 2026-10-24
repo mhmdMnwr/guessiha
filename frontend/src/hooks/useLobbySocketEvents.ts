@@ -55,14 +55,12 @@ export function bindLobbySocketEvents(ctx: LobbySocketContext) {
       isPrivate: Boolean(data.isPrivate),
       name: data.roomName,
       hostName: data.hostName,
-      hostIp: data.hostIp,
       playerCount: data.players?.length || 1,
       maxPlayers: data.maxPlayers || 8,
       selectedRegion: data.selectedRegion || "all",
       difficulty: data.difficulty || "all",
       totalRounds: data.totalRounds || 5,
       status: data.status || "LOBBY",
-      ping: 3,
     })
     state.setIsHost(Boolean(data.isHost))
     state.setRoomPlayers(data.players || [])

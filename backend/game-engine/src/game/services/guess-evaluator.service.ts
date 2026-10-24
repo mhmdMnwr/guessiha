@@ -46,18 +46,17 @@ export class GuessEvaluatorService {
     const guessedCount = activePlayers.filter((p) => p.hasGuessed).length;
 
     const players = activePlayers.map((p) => ({
-      id: p.publicId || toPublicPlayerId(p.id || p.ip),
+      id: p.publicId || toPublicPlayerId(p.id),
       username: p.username,
-      ip: p.ip,
       totalScore: p.totalScore || 0,
       hasGuessed: Boolean(p.hasGuessed),
-      isHost: (room.hostId && p.id === room.hostId) || (!room.hostId && p.ip === room.hostIp),
+      isHost: (room.hostId && p.id === room.hostId) || (room.hostSocketId && p.socketId === room.hostSocketId),
       connected: p.connected,
     }));
 
     server.to(room.id).emit('player_guessed', {
       username: player.username,
-      playerId: player.publicId || toPublicPlayerId(player.id || player.ip),
+      playerId: player.publicId || toPublicPlayerId(player.id),
       guessedCount,
       totalPlayers: activePlayers.length,
       players,

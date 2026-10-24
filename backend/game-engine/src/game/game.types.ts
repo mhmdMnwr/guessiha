@@ -3,7 +3,6 @@ import { GeoLocation } from '../geo-database/geo-database.service';
 export interface Player {
   id: string;
   publicId?: string;
-  ip: string;
   socketId: string;
   username: string;
   connected: boolean;
@@ -23,7 +22,6 @@ export interface Player {
 export interface PendingAdmission {
   clientId: string;
   publicId?: string;
-  ip: string;
   socketId: string;
   username: string;
   clientPublicKey?: string;
@@ -52,7 +50,6 @@ export interface GameRoom {
   name: string;
   status: 'LOBBY' | 'ROUND_ACTIVE' | 'ROUND_COUNTDOWN' | 'ROUND_RESULTS' | 'GAME_OVER';
   hostId: string | null;
-  hostIp: string | null;
   hostSocketId: string | null;
   hostName: string | null;
   lastHostUsername?: string | null;

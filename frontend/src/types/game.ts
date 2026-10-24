@@ -2,7 +2,6 @@
 // Shared game types
 // ─────────────────────────────────────────────────────────────────────────────
 
-export type ConnectionMode = "online" | "local"
 export type Screen = "select" | "browser" | "lobby" | "game" | "pending"
 
 export interface Coordinates {
@@ -16,7 +15,6 @@ export interface Room {
   isPrivate?: boolean
   name: string
   hostName: string
-  hostIp: string | null
   playerCount: number
   maxPlayers: number
   selectedRegion: string
@@ -24,12 +22,12 @@ export interface Room {
   totalRounds: number
   currentRound?: number
   status: string
-  ping: number
+  ping?: number
 }
 
 export interface Player {
   id?: string
-  ip: string
+  publicId?: string
   username: string
   connected: boolean
   totalScore: number

@@ -199,12 +199,11 @@ export class RoundCoordinatorService {
 
     const activePlayers = Object.values(room.players).filter((p) => p.connected && p.inGame !== false);
     const players = activePlayers.map((p) => ({
-      id: p.publicId || toPublicPlayerId(p.id || p.ip),
+      id: p.publicId || toPublicPlayerId(p.id),
       username: p.username,
-      ip: p.ip,
       totalScore: p.totalScore || 0,
       hasGuessed: false,
-      isHost: (room.hostId && p.id === room.hostId) || (!room.hostId && p.ip === room.hostIp),
+      isHost: (room.hostId && p.id === room.hostId) || (room.hostSocketId && p.socketId === room.hostSocketId),
       connected: p.connected,
     }));
 
@@ -218,7 +217,6 @@ export class RoundCoordinatorService {
       sharedImage: null,
       guessedCount: 0,
       totalPlayers: activePlayers.length,
-      hostIp: room.hostIp,
       players,
     };
 
@@ -264,16 +262,13 @@ export class RoundCoordinatorService {
 
     const activePlayers = Object.values(room.players).filter((p) => p.connected && p.inGame !== false);
     const results = activePlayers.map((p) => ({
-      id: p.publicId || toPublicPlayerId(p.id || p.ip),
-      ip: p.ip,
+      id: p.publicId || toPublicPlayerId(p.id),
       username: p.username,
       guess: p.lockedGuess,
-      guessCoords: p.lockedGuess,
-      coords: p.lockedGuess,
       distanceKm: p.lastRoundDistanceKm,
       roundScore: p.lastRoundScore,
       totalScore: p.totalScore,
-      isHost: (room.hostId && p.id === room.hostId) || (!room.hostId && p.ip === room.hostIp),
+      isHost: (room.hostId && p.id === room.hostId) || (room.hostSocketId && p.socketId === room.hostSocketId),
     }));
 
     const guessersWithDist = activePlayers
@@ -295,7 +290,6 @@ export class RoundCoordinatorService {
       round: room.currentRound,
       totalRounds: room.totalRounds,
       target: targetData,
-      targetLocation: targetData,
       results,
       leaderboard: [...results].sort((a, b) => b.totalScore - a.totalScore),
       closestPlayer: closestPlayer
@@ -304,10 +298,8 @@ export class RoundCoordinatorService {
             distanceKm: closestPlayer.lastRoundDistanceKm,
             score: closestPlayer.lastRoundScore,
             guess: closestPlayer.lockedGuess,
-            coords: closestPlayer.lockedGuess,
           }
         : null,
-      hostIp: room.hostIp,
     };
 
     room.lastRoundResults = payload;

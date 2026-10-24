@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Socket, Server } from 'socket.io';
 import { GameService } from '../game.service';
-import { getClientId, getClientIp } from './connection.handler';
+import { getClientId } from './connection.handler';
 import { GameRoom } from '../game.types';
 import { toPublicPlayerId } from '../factories/lobby.factory';
 
@@ -10,18 +10,16 @@ export class MatchControlHandler {
   constructor(private readonly gameService: GameService) {}
 
   async handleStartGame(socket: Socket, server: Server, room: GameRoom) {
-    const ip = getClientIp(socket);
     const clientId = getClientId(socket);
-    const res = await this.gameService.startGame(clientId, server, room, ip);
+    const res = await this.gameService.startGame(clientId, server, room);
     if (!res.success && res.error) {
       socket.emit('error_message', { message: res.error });
     }
   }
 
   handleStopGame(socket: Socket, server: Server, room: GameRoom) {
-    const ip = getClientIp(socket);
     const clientId = getClientId(socket);
-    const res = this.gameService.stopGame(clientId, server, room, ip);
+    const res = this.gameService.stopGame(clientId, server, room);
     if (!res.success && res.error) {
       socket.emit('error_message', { message: res.error });
     }
@@ -54,14 +52,13 @@ export class MatchControlHandler {
         .sort((a, b) => b.totalScore - a.totalScore);
 
       const leaderboard = sorted.map((p) => ({
-        id: p.publicId || toPublicPlayerId(p.id || p.ip),
+        id: p.publicId || toPublicPlayerId(p.id),
         username: p.username,
-        ip: p.ip,
         totalScore: p.totalScore,
         connected: true,
       }));
 
-      const payload = { roomId: room.id, leaderboard, hostIp: room.hostIp };
+      const payload = { roomId: room.id, leaderboard };
       room.lastGameOver = payload;
       server.to(room.id).emit('game_over', payload);
       server.emit('lobbies_list', this.gameService.getLobbiesList());
@@ -69,9 +66,8 @@ export class MatchControlHandler {
   }
 
   handleResetToLobby(socket: Socket, server: Server, room: GameRoom) {
-    const ip = getClientIp(socket);
     const clientId = getClientId(socket);
-    const res = this.gameService.stopGame(clientId, server, room, ip);
+    const res = this.gameService.stopGame(clientId, server, room);
     if (!res.success && res.error) {
       socket.emit('error_message', { message: res.error });
     }

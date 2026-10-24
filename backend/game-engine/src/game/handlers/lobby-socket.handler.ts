@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Socket, Server } from 'socket.io';
 import { GameService } from '../game.service';
 import { CryptoService } from '../../security/crypto.service';
-import { getClientId, getClientIp } from './connection.handler';
+import { getClientId } from './connection.handler';
 import {
   createGameRoom,
   createPlayer,
@@ -36,7 +36,7 @@ export class LobbySocketHandler {
       return;
     }
 
-    const allRooms = [this.gameService.state, ...Array.from(this.gameService.roomStore.customRooms.values())];
+    const allRooms = Array.from(this.gameService.roomStore.customRooms.values());
     const isTaken = isCallsignTaken(allRooms, clean, clientId);
     socket.emit('username_check_result', {
       username: raw,
@@ -46,7 +46,6 @@ export class LobbySocketHandler {
   }
 
   handleCreateLobby(socket: Socket, server: Server, data: any) {
-    const ip = getClientIp(socket);
     const clientId = getClientId(socket);
     const username = sanitizeText(data?.username, 18, 'SquadLeader');
 
@@ -61,22 +60,22 @@ export class LobbySocketHandler {
     }
 
     const existing = this.gameService.roomStore.findRoomByPlayer(clientId);
-    if (existing && existing.id !== 'LAN-01') {
+    if (existing) {
       socket.emit('error_message', {
         message: 'You are already in an active squad. Leave your current squad before creating a new one.',
       });
       return;
     }
 
-    const allRooms = [this.gameService.state, ...Array.from(this.gameService.roomStore.customRooms.values())];
+    const allRooms = Array.from(this.gameService.roomStore.customRooms.values());
     if (isCallsignTaken(allRooms, username, clientId)) {
       socket.emit('error_message', { message: `Codename "${username}" is already claimed by an active operative.` });
       return;
     }
 
     const roomId = generateRoomCode(this.gameService.roomStore.customRooms.keys());
-    const room = createGameRoom(roomId, data?.name || `Squad ${roomId}`, clientId, ip, socket.id, username, data);
-    const hostPlayer = createPlayer(clientId, ip, socket.id, username);
+    const room = createGameRoom(roomId, data?.name || `Squad ${roomId}`, clientId, socket.id, username, data);
+    const hostPlayer = createPlayer(clientId, socket.id, username);
     room.players[clientId] = hostPlayer;
 
     let serverPublicKey: string | null = null;
@@ -100,7 +99,6 @@ export class LobbySocketHandler {
       roomName: room.name,
       hostName: username,
       isHost: true,
-      hostIp: ip,
       maxPlayers: room.maxPlayers,
       role: 'HOST',
       serverPublicKey,
@@ -124,19 +122,22 @@ export class LobbySocketHandler {
   }
 
   handleJoinLobby(socket: Socket, server: Server, data: any) {
-    const ip = getClientIp(socket);
     const clientId = getClientId(socket);
     const targetRoom = this.gameService.getRoom(data?.roomId);
 
-    if (!targetRoom) { socket.emit('error_message', { message: 'Lobby not found.' }); return; }
+    if (!targetRoom) {
+      socket.emit('error_message', { message: 'Squad not found or already closed.' });
+      return;
+    }
 
-    const oldRoom = this.gameService.roomStore.findRoomByPlayer(clientId);
-    if (oldRoom && oldRoom.id !== targetRoom.id && oldRoom.id !== 'LAN-01') {
-      if (oldRoom.hostId === clientId || oldRoom.hostSocketId === socket.id) {
-        this.gameService.terminateLobby(oldRoom.id, server, 'Squad Leader moved to another squad. Expedition disbanded.');
+    // Clean up from any old room
+    const oldRoom = this.gameService.findRoomByPlayer(clientId);
+    if (oldRoom && oldRoom.id !== targetRoom.id) {
+      const isOldHost = oldRoom.hostId === clientId || oldRoom.hostSocketId === socket.id;
+      if (isOldHost) {
+        this.gameService.terminateLobby(oldRoom.id, server, 'Leader joined another squad. Room disbanded.');
       } else {
         delete oldRoom.players[clientId];
-        delete oldRoom.players[ip];
         socket.leave(oldRoom.id);
         if (Object.keys(oldRoom.players).length === 0) {
           this.gameService.deleteRoom(oldRoom.id);
@@ -149,23 +150,26 @@ export class LobbySocketHandler {
 
     const username = String(data?.username || 'Operative').trim();
     if (!username || username.length < 2) {
-      socket.emit('error_message', { message: 'Username must be at least 2 characters.' }); return;
+      socket.emit('error_message', { message: 'Username must be at least 2 characters.' });
+      return;
     }
 
     // Reconnect path OR host → directly admitted
     const isMember = Boolean(targetRoom.players[clientId]);
     const isHost = targetRoom.hostId === clientId || targetRoom.hostSocketId === socket.id;
     if (isMember || isHost) {
-      return this.admission.admitPlayer(socket, server, targetRoom, clientId, ip, username, data?.clientPublicKey);
+      return this.admission.admitPlayer(socket, server, targetRoom, clientId, username, data?.clientPublicKey);
     }
 
     if (isCallsignTaken([targetRoom], username, clientId)) {
-      socket.emit('error_message', { message: `Codename "${username}" is already claimed in this squad.` }); return;
+      socket.emit('error_message', { message: `Codename "${username}" is already claimed in this squad.` });
+      return;
     }
 
     const activeCount = Object.values(targetRoom.players).filter((p) => p && p.connected).length;
     if (activeCount >= (targetRoom.maxPlayers || 8)) {
-      socket.emit('error_message', { message: `Squad is at maximum capacity (${targetRoom.maxPlayers || 8} operatives).` }); return;
+      socket.emit('error_message', { message: `Squad is at maximum capacity (${targetRoom.maxPlayers || 8} operatives).` });
+      return;
     }
 
     // Queue as pending — host must approve
@@ -182,31 +186,38 @@ export class LobbySocketHandler {
     }
 
     targetRoom.pendingAdmissions[clientId] = {
-      clientId, ip, socketId: socket.id, username,
+      clientId,
+      socketId: socket.id,
+      username,
       clientPublicKey: data?.clientPublicKey,
       requestedAt: isAlreadyPending ? targetRoom.pendingAdmissions[clientId].requestedAt : Date.now(),
     };
 
     socket.emit('admission_pending', {
-      roomId: targetRoom.id, roomName: targetRoom.name,
+      roomId: targetRoom.id,
+      roomName: targetRoom.name,
       message: 'Waiting for Squad Leader approval...',
     });
 
     // Only notify host if this is a fresh request to avoid toast/notification spam
     if (targetRoom.hostSocketId && !isAlreadyPending) {
       server.to(targetRoom.hostSocketId).emit('admission_request', {
-        roomId: targetRoom.id, clientId, username,
+        roomId: targetRoom.id,
+        clientId,
+        username,
         requestedAt: targetRoom.pendingAdmissions[clientId].requestedAt,
       });
     }
   }
 
   handleLeaveLobby(socket: Socket, server: Server, data: any) {
-    const ip = getClientIp(socket);
     const clientId = getClientId(socket);
     const roomId = data?.roomId;
     const room = roomId ? this.gameService.getRoom(roomId) : this.gameService.findRoomByPlayer(clientId);
-    if (!room) { if (roomId) socket.leave(roomId); return; }
+    if (!room) {
+      if (roomId) socket.leave(roomId);
+      return;
+    }
 
     if (room.pendingAdmissions[clientId]) delete room.pendingAdmissions[clientId];
 
@@ -226,26 +237,26 @@ export class LobbySocketHandler {
       (room.hostSocketId && socket.id === room.hostSocketId) ||
       Boolean(data?.isHost && (clientId === room.hostId || socket.id === room.hostSocketId || room.hostName === data?.username));
 
-    if (wasHost && room.id !== 'LAN-01') {
+    if (wasHost) {
       this.gameService.terminateLobby(room.id, server, 'Squad Leader has left the room. Expedition disbanded.');
-      socket.leave(room.id); return;
+      socket.leave(room.id);
+      return;
     }
 
     delete room.players[clientId];
-    delete room.players[ip];
     const key = Object.keys(room.players).find((k) => room.players[k]?.id === clientId || room.players[k]?.socketId === socket.id);
     if (key) delete room.players[key];
 
     socket.leave(room.id);
     const remainingCount = Object.keys(room.players).length;
-    if (remainingCount === 0 && room.id !== 'LAN-01') {
+    if (remainingCount === 0) {
       this.gameService.deleteRoom(room.id);
       server.emit('lobbies_list', this.gameService.getLobbiesList());
       return;
     }
 
     this.gameService.broadcastLobbyUpdate(server, room);
-    server.to(room.id).emit('player_left', { ip, username: data?.username, remainingCount });
+    server.to(room.id).emit('player_left', { id: clientId, username: data?.username, remainingCount });
     this.gameService.guessEvaluator.checkAllGuessed(server, room);
   }
 }

@@ -2,8 +2,6 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 import * as express from 'express';
-import * as path from 'path';
-import * as fs from 'fs';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -58,18 +56,6 @@ async function bootstrap() {
   });
 
   app.use(wsProxy);
-
-  const candidateDirs = [
-    path.join(process.cwd(), 'frontend', 'dist'),
-    path.join(process.cwd(), '..', '..', 'frontend', 'dist'),
-    path.join(__dirname, '..', '..', 'frontend', 'dist'),
-  ];
-  for (const dir of candidateDirs) {
-    if (fs.existsSync(dir)) {
-      app.use(express.static(dir));
-      break;
-    }
-  }
 
   const port = parseInt(process.env.PORT || '5000', 10);
   const server = app.getHttpServer();

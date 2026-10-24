@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Socket, Server } from 'socket.io';
 import { GameService } from '../game.service';
-import { getClientId, getClientIp } from './connection.handler';
+import { getClientId } from './connection.handler';
 import { GameRoom } from '../game.types';
 
 @Injectable()
@@ -9,7 +9,6 @@ export class HostActionHandler {
   constructor(private readonly gameService: GameService) {}
 
   handleTransferHost(socket: Socket, server: Server, room: GameRoom, data: any) {
-    const ip = getClientIp(socket);
     const clientId = getClientId(socket);
     this.gameService.ensureActiveHost(room);
 
@@ -19,24 +18,23 @@ export class HostActionHandler {
       return;
     }
 
-    const targetId = data?.targetIp || data?.targetId;
+    const targetId = data?.targetId;
     const target = Object.values(room.players).find(
-      (p) => p && (p.publicId === targetId || p.id === targetId || p.ip === targetId),
+      (p) => p && (p.publicId === targetId || p.id === targetId),
     );
     if (!target || target.connected !== true) {
       socket.emit('error_message', { message: 'Cannot transfer host: targeted operative is not connected.' });
       return;
     }
 
-    this.gameService.transferHost(room, target, server, ip);
+    this.gameService.transferHost(room, target, server);
   }
 
   handleClaimHost(socket: Socket, server: Server, room: GameRoom) {
-    const ip = getClientIp(socket);
     const clientId = getClientId(socket);
     this.gameService.ensureActiveHost(room);
 
-    const host = room.hostId ? room.players[room.hostId] : room.hostIp ? room.players[room.hostIp] : null;
+    const host = room.hostId ? room.players[room.hostId] : null;
     if (host && host.connected === true) {
       socket.emit('error_message', { message: `Squad leadership is actively held by ${host.username}.` });
       return;
@@ -51,14 +49,13 @@ export class HostActionHandler {
       return;
     }
 
-    const player = room.players[clientId] || room.players[ip];
+    const player = room.players[clientId];
     if (!player) return;
 
-    room.hostIp = ip;
     room.hostId = clientId;
     room.hostSocketId = socket.id;
     room.hostName = player.username;
-    socket.emit('host_claimed', { success: true, hostIp: ip });
+    socket.emit('host_claimed', { success: true });
     this.gameService.broadcastLobbyUpdate(server, room);
   }
 
@@ -106,11 +103,11 @@ export class HostActionHandler {
       return;
     }
 
-    const targetId = data?.targetId || data?.targetIp;
+    const targetId = data?.targetId;
     if (!targetId) return;
 
     const target = Object.values(room.players).find(
-      (p) => p && (p.publicId === targetId || p.id === targetId || p.ip === targetId || p.socketId === targetId),
+      (p) => p && (p.publicId === targetId || p.id === targetId || p.socketId === targetId),
     );
 
     if (!target) {
@@ -135,10 +132,9 @@ export class HostActionHandler {
     }
 
     delete room.players[target.id];
-    delete room.players[target.ip];
 
     const remainingCount = Object.keys(room.players).length;
-    if (remainingCount === 0 && room.id !== 'LAN-01') {
+    if (remainingCount === 0) {
       this.gameService.deleteRoom(room.id);
       server.emit('lobbies_list', this.gameService.getLobbiesList());
       return;

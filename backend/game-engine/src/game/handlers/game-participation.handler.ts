@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Socket, Server } from 'socket.io';
 import { GameService } from '../game.service';
-import { getClientId, getClientIp } from './connection.handler';
+import { getClientId } from './connection.handler';
 import { GameRoom } from '../game.types';
 
 @Injectable()
@@ -9,12 +9,11 @@ export class GameParticipationHandler {
   constructor(private readonly gameService: GameService) {}
 
   handleJoinGame(socket: Socket, server: Server, room: GameRoom) {
-    const ip = getClientIp(socket);
     const clientId = getClientId(socket);
-    const player = room.players[clientId] || room.players[ip];
+    const player = room.players[clientId];
 
     if (!player) {
-      socket.emit('error_message', { message: 'Please set your username first.' });
+      socket.emit('error_message', { message: 'Operative not found in squad.' });
       return;
     }
     if (room.status === 'LOBBY') {
@@ -30,12 +29,11 @@ export class GameParticipationHandler {
     const totalPlayers = inGamePlayers.length;
 
     const players = inGamePlayers.map((p) => ({
-      id: p.id || p.ip,
+      id: p.id,
       username: p.username,
-      ip: p.ip,
       totalScore: p.totalScore || 0,
       hasGuessed: Boolean(p.hasGuessed),
-      isHost: (room.hostId && p.id === room.hostId) || (!room.hostId && p.ip === room.hostIp),
+      isHost: (room.hostId && p.id === room.hostId) || (room.hostSocketId && p.socketId === room.hostSocketId),
       connected: p.connected,
     }));
 
@@ -52,8 +50,7 @@ export class GameParticipationHandler {
         totalPlayers,
         countdownSeconds: room.countdownSeconds,
         firstGuesserName: room.firstGuesserName,
-        isHost: (room.hostId && clientId === room.hostId) || ip === room.hostIp,
-        hostIp: room.hostIp,
+        isHost: (room.hostId && clientId === room.hostId) || (room.hostSocketId && socket.id === room.hostSocketId),
         hasGuessed: Boolean(player.hasGuessed),
         myPin: player.lockedGuess || null,
         totalScore: player.totalScore || 0,
@@ -67,20 +64,18 @@ export class GameParticipationHandler {
 
     server.to(room.id).emit('player_joined', {
       username: player.username,
-      ip: player.ip,
       totalPlayers,
     });
   }
 
   handleLeaveGame(socket: Socket, server: Server, room: GameRoom, data?: any) {
-    const ip = getClientIp(socket);
     const clientId = getClientId(socket);
-    const player = room.players[clientId] || room.players[ip];
+    const player = room.players[clientId];
     const wasHost = (room.hostId && clientId === room.hostId) ||
       room.hostSocketId === socket.id ||
       Boolean(data?.isHost && (clientId === room.hostId || socket.id === room.hostSocketId));
 
-    if (wasHost && room.id !== 'LAN-01') {
+    if (wasHost) {
       this.gameService.terminateLobby(
         room.id,
         server,
@@ -92,18 +87,17 @@ export class GameParticipationHandler {
 
     if (player) {
       delete room.players[clientId];
-      delete room.players[ip];
       const key = Object.keys(room.players).find((k) => room.players[k]?.id === clientId || room.players[k]?.socketId === socket.id);
       if (key) delete room.players[key];
     }
     socket.leave(room.id);
     const remainingCount = Object.keys(room.players).length;
-    if (remainingCount === 0 && room.id !== 'LAN-01') {
+    if (remainingCount === 0) {
       this.gameService.deleteRoom(room.id);
       server.emit('lobbies_list', this.gameService.getLobbiesList());
       return;
     }
-    server.to(room.id).emit('player_left', { username: player?.username, ip, remainingCount });
+    server.to(room.id).emit('player_left', { username: player?.username, remainingCount });
     this.gameService.guessEvaluator.checkAllGuessed(server, room);
     this.gameService.broadcastLobbyUpdate(server, room);
   }

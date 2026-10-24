@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Socket, Server } from 'socket.io';
 import { GameService } from '../game.service';
-import { getClientId, getClientIp } from './connection.handler';
+import { getClientId } from './connection.handler';
 import { GameRoom } from '../game.types';
 
 @Injectable()
@@ -9,14 +9,12 @@ export class MatchParamsHandler {
   constructor(private readonly gameService: GameService) {}
 
   private checkHost(socket: Socket, room: GameRoom, action: string): boolean {
-    const ip = getClientIp(socket);
     const clientId = getClientId(socket);
     this.gameService.ensureActiveHost(room);
 
     const isHost =
       (room.hostId && clientId === room.hostId) ||
-      (room.hostSocketId && socket.id === room.hostSocketId) ||
-      (!room.hostId && ip === room.hostIp);
+      (room.hostSocketId && socket.id === room.hostSocketId);
 
     if (!isHost) {
       socket.emit('error_message', {
@@ -58,19 +56,7 @@ export class MatchParamsHandler {
   }
 
   handleSetRegion(socket: Socket, server: Server, room: GameRoom, data: any) {
-    const ip = getClientIp(socket);
-    const clientId = getClientId(socket);
-    this.gameService.ensureActiveHost(room);
-
-    const isHost =
-      (room.hostId && clientId === room.hostId) ||
-      (room.hostSocketId && socket.id === room.hostSocketId) ||
-      (!room.hostId && ip === room.hostIp);
-
-    if (!isHost) {
-      socket.emit('error_message', { message: 'Only the host can change the map region.' });
-      return;
-    }
+    if (!this.checkHost(socket, room, 'map region')) return;
 
     const region = String(data?.region || 'all').toLowerCase();
     room.selectedRegion = region;
@@ -79,19 +65,7 @@ export class MatchParamsHandler {
   }
 
   handleSetDifficulty(socket: Socket, server: Server, room: GameRoom, data: any) {
-    const ip = getClientIp(socket);
-    const clientId = getClientId(socket);
-    this.gameService.ensureActiveHost(room);
-
-    const isHost =
-      (room.hostId && clientId === room.hostId) ||
-      (room.hostSocketId && socket.id === room.hostSocketId) ||
-      (!room.hostId && ip === room.hostIp);
-
-    if (!isHost) {
-      socket.emit('error_message', { message: 'Only the host can set difficulty.' });
-      return;
-    }
+    if (!this.checkHost(socket, room, 'difficulty')) return;
 
     const diff = String(data?.difficulty || 'all').toLowerCase();
     if (['all', 'easy', 'medium', 'hard'].includes(diff)) {

@@ -20,7 +20,6 @@ export class ConnectionHandler {
   ) {}
 
   handleConnection(socket: Socket, server: Server) {
-    const ip = getClientIp(socket);
     const clientId = getClientId(socket);
     const queryRoomId = socket.handshake.query?.roomId as string;
     this.logger.log(`Connection: ${socket.id} (Client: ${clientId}, Room: ${queryRoomId || 'none'})`);
@@ -33,36 +32,21 @@ export class ConnectionHandler {
 
     const targetRoom = queryRoomId ? this.gameService.getRoom(queryRoomId) : null;
     const existingRoom = targetRoom || this.gameService.findRoomByPlayer(clientId);
-    const gameState = existingRoom || this.gameService.state;
-    socket.join(gameState.id);
 
-    const player = existingRoom
-      ? existingRoom.players[clientId] || Object.values(existingRoom.players).find((p) => p.id === clientId)
-      : null;
-    if (player) {
-      player.socketId = socket.id;
-      player.connected = true;
-      player.lastDisconnectedAt = undefined;
-    }
+    if (existingRoom) {
+      socket.join(existingRoom.id);
 
-    if (existingRoom && existingRoom.hostId === clientId) {
-      existingRoom.hostSocketId = socket.id;
-      existingRoom.hostIp = ip;
-    }
+      const player = existingRoom.players[clientId] || Object.values(existingRoom.players).find((p) => p.id === clientId);
+      if (player) {
+        player.socketId = socket.id;
+        player.connected = true;
+        player.lastDisconnectedAt = undefined;
+      }
 
-    socket.emit('prompt_username', {
-      ip,
-      inProgress: gameState.status !== 'LOBBY',
-      gameStatus: gameState.status !== 'LOBBY' ? {
-        status: gameState.status,
-        currentRound: gameState.currentRound,
-        totalRounds: gameState.totalRounds,
-        difficulty: gameState.difficulty,
-        hostName: gameState.players[gameState.hostIp || '']?.username || gameState.hostName || 'Host',
-      } : null,
-    });
+      if (existingRoom.hostId === clientId) {
+        existingRoom.hostSocketId = socket.id;
+      }
 
-    if (existingRoom && existingRoom.id !== 'LAN-01') {
       const isHost = existingRoom.hostId === clientId || existingRoom.hostSocketId === socket.id;
       socket.emit('lobby_joined', {
         roomId: existingRoom.id,
@@ -70,7 +54,6 @@ export class ConnectionHandler {
         isPrivate: Boolean(existingRoom.isPrivate),
         roomName: existingRoom.name,
         hostName: existingRoom.hostName,
-        hostIp: existingRoom.hostIp,
         maxPlayers: existingRoom.maxPlayers,
         isHost: Boolean(isHost),
         role: isHost ? 'HOST' : 'OPERATIVE',
@@ -103,14 +86,15 @@ export class ConnectionHandler {
           });
         }
       }
-    }
 
-    this.gameService.broadcastLobbyUpdate(server, gameState);
+      this.gameService.broadcastLobbyUpdate(server, existingRoom);
+    }
   }
 
   handleDisconnect(socket: Socket, server: Server) {
     const clientId = getClientId(socket);
-    const room = this.gameService.findRoomByPlayer(clientId) || this.gameService.state;
+    const room = this.gameService.findRoomByPlayer(clientId);
+    if (!room) return;
 
     const playerKey = Object.keys(room.players).find(
       (k) => k === clientId || room.players[k]?.socketId === socket.id,
@@ -127,7 +111,7 @@ export class ConnectionHandler {
         (room.hostName && player.username === room.hostName)
       );
 
-      if (wasHost && room.id !== 'LAN-01') {
+      if (wasHost) {
         const t = setTimeout(() => {
           this.disconnectTimeouts.delete(clientId);
           const currentRoom = this.gameService.getRoom(room.id);
@@ -175,12 +159,9 @@ export class ConnectionHandler {
       room.status = 'LOBBY';
       room.currentRound = 0;
       room.hostId = null;
-      room.hostIp = null;
-      if (room.id !== 'LAN-01') {
-        this.gameService.deleteRoom(room.id);
-        server.emit('lobbies_list', this.gameService.getLobbiesList());
-        return;
-      }
+      this.gameService.deleteRoom(room.id);
+      server.emit('lobbies_list', this.gameService.getLobbiesList());
+      return;
     } else {
       this.gameService.ensureActiveHost(room);
     }
@@ -190,7 +171,6 @@ export class ConnectionHandler {
       username: player.username,
       id: player.publicId || toPublicPlayerId(clientId),
       remainingCount: remaining.length,
-      hostIp: room.hostIp,
     });
     this.gameService.broadcastLobbyUpdate(server, room);
   }

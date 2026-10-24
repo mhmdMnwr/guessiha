@@ -72,7 +72,7 @@ export function deriveGameTelemetry({
       ? [...players]
           .sort((a, b) => (b.totalScore || 0) - (a.totalScore || 0))
           .map((p: any, idx: number) => ({
-            id: p.id || p.ip,
+            id: p.id,
             username: p.username,
             totalScore: p.totalScore || 0,
             isHost: p.isHost,
