@@ -21,7 +21,8 @@ export function ToastContainer({ toasts, onDismiss }: ToastContainerProps) {
       className="fixed inset-x-0 mx-auto w-fit max-w-[min(440px,calc(100vw-32px))] z-[9999] pointer-events-none flex flex-col items-center gap-2 px-3"
       style={{ top: "calc(var(--sat, 0px) + 10px)" }}
     >
-      {toasts.map((toast) => {
+      {toasts.map((toast, index) => {
+        const isOlderThanTwoOnMobile = index < toasts.length - 2
         const type = toast.type || "info"
         const borderColor =
           type === "success"
@@ -46,7 +47,9 @@ export function ToastContainer({ toasts, onDismiss }: ToastContainerProps) {
 
         return (
           <div
-            className={`pointer-events-auto flex items-center gap-2.5 py-2 px-3.5 bg-slate-950/95 border ${borderColor} rounded-full backdrop-blur-xl transition-all shadow-lg animate-in slide-in-from-top-2 duration-200`}
+            className={`pointer-events-auto items-center gap-2.5 py-2 px-3.5 bg-slate-950/95 border ${borderColor} rounded-full backdrop-blur-xl transition-all shadow-lg animate-in slide-in-from-top-2 duration-200 ${
+              isOlderThanTwoOnMobile ? "hidden md:flex" : "flex"
+            }`}
             key={toast.id}
           >
             <span

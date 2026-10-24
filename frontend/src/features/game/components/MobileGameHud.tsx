@@ -63,18 +63,10 @@ export default function MobileGameHud({
       </div>
 
       <div className="hud-center">
-        <div className={`hud-status-pill ${isUrgent ? "hud-status-pill--urgent" : ""}`}>
+        <div className="hud-status-pill">
           <span className="hud-round-badge">
             R{currentRound}/{totalRounds}
           </span>
-          {countdownSeconds !== null && showTimer && (
-            <>
-              <span className="hud-pill-divider" />
-              <span className="hud-timer-badge">
-                ⏱ {String(Math.floor(countdownSeconds / 60)).padStart(2, "0")}:{String(countdownSeconds % 60).padStart(2, "0")}
-              </span>
-            </>
-          )}
         </div>
       </div>
 

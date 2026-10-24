@@ -2,6 +2,7 @@ import { Icon } from "../../../shared/components/Icon"
 import { GameButton } from "../../../shared/components/GameButton"
 import { LeafletMapView } from "./LeafletMapView"
 import { LiveStandingsWidget } from "./LiveStandingsWidget"
+import { MobileTimerPill } from "./MobileTimerPill"
 import type { Coordinates, Room } from "../../../types/game"
 
 interface ExploreViewProps {
@@ -12,6 +13,7 @@ interface ExploreViewProps {
   liveLeaderboard: any[]
   myPin: Coordinates | null
   hasGuessed: boolean
+  countdownSeconds?: number | null
   onSelectCoords: (coords: Coordinates) => void
   onLockGuess: () => void
   onOpenAtlas: () => void
@@ -25,6 +27,7 @@ export function ExploreView({
   liveLeaderboard,
   hasGuessed,
   myPin,
+  countdownSeconds,
   onSelectCoords,
   onLockGuess,
   onOpenAtlas,
@@ -83,9 +86,12 @@ export function ExploreView({
       </aside>
 
       <div className="explore-floating-actions md:hidden">
+        {countdownSeconds != null && (
+          <MobileTimerPill countdownSeconds={countdownSeconds} />
+        )}
         <button
           aria-label="Open Map to Guess"
-          className={`explore-guess-fab ${
+          className={`explore-guess-fab flex-1 ${
             hasGuessed
               ? "explore-guess-fab--locked"
               : myPin

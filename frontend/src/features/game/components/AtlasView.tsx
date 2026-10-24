@@ -2,6 +2,7 @@ import { Icon } from "../../../shared/components/Icon"
 import { GameButton } from "../../../shared/components/GameButton"
 import { LeafletMapView } from "./LeafletMapView"
 import { LiveStandingsWidget } from "./LiveStandingsWidget"
+import { MobileTimerPill } from "./MobileTimerPill"
 import type { Coordinates } from "../../../types/game"
 
 interface AtlasViewProps {
@@ -51,20 +52,6 @@ export function AtlasView({
           <span>STREET VIEW</span>
         </button>
 
-        {countdownSeconds != null && (
-          <div
-            className={`atlas-timer-pill ${
-              isUrgent ? "atlas-timer-pill--urgent" : ""
-            }`}
-          >
-            <Icon name="clock" size={14} />
-            <span>
-              {String(Math.floor(countdownSeconds / 60)).padStart(2, "0")}:
-              {String(countdownSeconds % 60).padStart(2, "0")}
-            </span>
-          </div>
-        )}
-
         <span className="atlas-pin-status">
           {hasGuessed ? "✓ LOCKED" : myPin ? "📍 PIN PLACED" : "TAP MAP"}
         </span>
@@ -90,12 +77,16 @@ export function AtlasView({
       </div>
 
       <footer className="atlas-footer">
+        {countdownSeconds != null && (
+          <MobileTimerPill countdownSeconds={countdownSeconds} />
+        )}
         {hasGuessed ? (
-          <div className="atlas-locked-pill">
+          <div className="atlas-locked-pill flex-1 text-center">
             <span>✓ GUESS LOCKED // WAITING FOR SQUAD</span>
           </div>
         ) : (
           <GameButton
+            className="flex-1"
             disabled={!myPin}
             icon="check"
             onClick={handleLockGuess}
