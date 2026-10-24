@@ -45,7 +45,9 @@ export function GameScreen(props: GameScreenProps) {
     onDemandCrown, crownClaimPending,
   } = props
 
-  const [view, setView] = useState<GameViewMode>("explore")
+  const [view, setView] = useState<GameViewMode>(() =>
+    typeof window !== "undefined" && new URLSearchParams(window.location.search).get("preview") === "atlas" ? "atlas" : "explore"
+  )
 
   // Keyboard navigation: "m" -> toggle Atlas/Explore, "s" -> toggle Standings/Explore, "Escape" -> Explore
   useEffect(() => {
@@ -75,7 +77,7 @@ export function GameScreen(props: GameScreenProps) {
   const activePlayProps = {
     room, currentRound, totalRounds, totalScore,
     liveLeaderboard: telemetry.liveLeaderboard,
-    myPin, hasGuessed, onSelectCoords, onLockGuess,
+    myPin, hasGuessed, countdownSeconds, onSelectCoords, onLockGuess,
   }
 
   return (

@@ -248,6 +248,30 @@
   color: var(--acid);
 }
 
+.atlas-timer-pill {
+  height: 30px;
+  padding: 0 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 9999px;
+  background: rgba(14, 20, 23, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--acid);
+  font-family: var(--heading);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.atlas-timer-pill--urgent {
+  color: #fb7185;
+  border-color: #f43f5e;
+  box-shadow: 0 0 14px rgba(244, 63, 94, 0.45);
+  animation: hud-pulse 0.9s ease-in-out infinite;
+}
+
 .atlas-map-container {
   flex: 1;
   width: 100%;

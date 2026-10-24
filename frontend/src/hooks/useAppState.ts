@@ -50,7 +50,7 @@ export function useAppState() {
   const [currentRound, setCurrentRound] = useState(preview ? 2 : 1)
   const [totalRounds, setTotalRounds] = useState(5)
   const [uplinkToken, setUplinkToken] = useState<string | null>(null)
-  const [countdownSeconds, setCountdownSeconds] = useState<number | null>(preview === "game" ? 42 : null)
+  const [countdownSeconds, setCountdownSeconds] = useState<number | null>(preview === "game" || preview === "atlas" ? 42 : null)
   const [myPin, setMyPin] = useState<Coordinates | null>(preview === "game" || preview === "results" ? MOCK_PIN : null)
   const [hasGuessed, setHasGuessed] = useState(preview === "game" || preview === "results")
   const [totalScore, setTotalScore] = useState(preview ? 4928 : 0)

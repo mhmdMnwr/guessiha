@@ -11,6 +11,7 @@ interface AtlasViewProps {
   liveLeaderboard: any[]
   myPin: Coordinates | null
   hasGuessed: boolean
+  countdownSeconds?: number | null
   onSelectCoords: (coords: Coordinates) => void
   onLockGuess: () => void
   onCloseAtlas: () => void
@@ -23,10 +24,13 @@ export function AtlasView({
   liveLeaderboard,
   myPin,
   hasGuessed,
+  countdownSeconds,
   onSelectCoords,
   onLockGuess,
   onCloseAtlas,
 }: AtlasViewProps) {
+  const isUrgent = countdownSeconds != null && countdownSeconds <= 10
+
   const handleLockGuess = () => {
     if (typeof window !== "undefined" && window.navigator?.vibrate) {
       window.navigator.vibrate(20)
@@ -47,12 +51,22 @@ export function AtlasView({
           <span>STREET VIEW</span>
         </button>
 
+        {countdownSeconds != null && (
+          <div
+            className={`atlas-timer-pill ${
+              isUrgent ? "atlas-timer-pill--urgent" : ""
+            }`}
+          >
+            <Icon name="clock" size={14} />
+            <span>
+              {String(Math.floor(countdownSeconds / 60)).padStart(2, "0")}:
+              {String(countdownSeconds % 60).padStart(2, "0")}
+            </span>
+          </div>
+        )}
+
         <span className="atlas-pin-status">
-          {hasGuessed
-            ? "✓ GUESS LOCKED"
-            : myPin
-              ? "📍 PIN PLACED"
-              : "TAP MAP TO PLACE PIN"}
+          {hasGuessed ? "✓ LOCKED" : myPin ? "📍 PIN PLACED" : "TAP MAP"}
         </span>
       </header>
 

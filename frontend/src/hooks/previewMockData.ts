@@ -62,7 +62,7 @@ export function getInitialScreen(): Screen {
   const preview = getPreviewParam()
   if (preview === "browser") return "browser"
   if (preview === "lobby") return "lobby"
-  if (preview === "game" || preview === "results") return "game"
+  if (preview === "game" || preview === "results" || preview === "atlas") return "game"
   const active = getStoredActiveRoom()
   const storedScreen = getStoredScreen()
   return active && (storedScreen === "lobby" || storedScreen === "game") ? storedScreen : "select"
@@ -71,7 +71,7 @@ export function getInitialScreen(): Screen {
 export function getInitialActiveRoom(): Room | null {
   const preview = getPreviewParam()
   if (preview === "lobby") return MOCK_ROOM
-  if (preview === "game" || preview === "results") return { ...MOCK_ROOM, status: "ROUND_ACTIVE" }
+  if (preview === "game" || preview === "results" || preview === "atlas") return { ...MOCK_ROOM, status: "ROUND_ACTIVE" }
   const active = getStoredActiveRoom()
   const storedScreen = getStoredScreen()
   if (active?.id && (storedScreen === "lobby" || storedScreen === "game")) {
