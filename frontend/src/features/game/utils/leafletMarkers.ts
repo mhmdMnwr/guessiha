@@ -83,12 +83,15 @@ export function renderRoundResultOverlays(
     boundsPoints.push([guess.coords.lat, guess.coords.lng])
 
     const distLabel = guess.distanceKm != null ? `${Math.round(guess.distanceKm)} km` : ""
+    const scoreLabel = guess.roundScore != null ? `+${guess.roundScore.toLocaleString()}` : ""
+    const metaParts = [distLabel, scoreLabel].filter(Boolean).join(" • ")
+    const metaStr = metaParts ? ` (${metaParts})` : ""
     const badgeClass = guess.isClosest ? "beacon-closest" : guess.isLocal ? "beacon-local" : "beacon-other"
     const badgeTitle = guess.isClosest
-      ? `👑 ${guess.username} ${distLabel ? `(${distLabel})` : ""}`
+      ? `👑 ${guess.username}${metaStr}`
       : guess.isLocal
-        ? `YOU ${distLabel ? `(${distLabel})` : ""}`
-        : `${guess.username} ${distLabel ? `(${distLabel})` : ""}`
+        ? `YOU${metaStr}`
+        : `${guess.username}${metaStr}`
     const safeBadgeTitle = escapeHtml(badgeTitle)
 
     const playerIcon = L.divIcon({

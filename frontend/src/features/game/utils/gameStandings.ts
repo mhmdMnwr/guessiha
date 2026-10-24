@@ -53,13 +53,14 @@ export function deriveGameTelemetry({
 
   const myResult = rawResults.find((r) => isLocalPlayer(r) || (isHost && r.isHost))
   const myDistanceKm: number | null = myResult?.distanceKm ?? null
-  const myRoundScore: number = myResult?.roundScore ?? 0
+  const myRoundScore: number = myResult?.roundScore ?? myResult?.score ?? 0
 
   const currentLeaderboard = (
     roundResults?.leaderboard ||
     [...rawResults].sort((a, b) => (b.totalScore || 0) - (a.totalScore || 0))
   ).map((p: any, idx: number) => ({
     ...p,
+    roundScore: p.roundScore ?? p.score ?? 0,
     isLocal: isLocalPlayer(p),
     rank: idx + 1,
   }))

@@ -1,5 +1,6 @@
 import { GameButton } from "../../../shared/components/GameButton"
 import { LeafletMapView } from "./LeafletMapView"
+import { RoundResultsLeaderboard } from "./RoundResultsLeaderboard"
 import type { Coordinates } from "../../../types/game"
 import type { PlayerGuessResult } from "../utils/leafletMarkers"
 
@@ -80,35 +81,10 @@ export function RoundResultsView({
             </span>
           </div>
 
-          <div className="round-leaderboard-container mt-3 mb-3">
-            <div className="text-xs font-mono uppercase tracking-widest text-slate-400 mb-2 flex items-center justify-between">
-              <span>STANDINGS AFTER ROUND {currentRound}</span>
-              <span className="text-slate-500 font-bold">{currentLeaderboard.length} OPERATIVES</span>
-            </div>
-            <div className="round-leaderboard-list max-h-48 overflow-y-auto pr-1">
-              {currentLeaderboard.map((player: any) => (
-                <div
-                  className={`round-leaderboard-item ${player.isLocal ? "round-leaderboard-item--you" : ""}`}
-                  key={player.username}
-                >
-                  <span className="round-rank font-mono text-xs font-bold text-slate-400">
-                    {player.rank === 1 ? "👑 01" : String(player.rank).padStart(2, "0")}
-                  </span>
-                  <span className="round-player-name truncate font-semibold text-sm">
-                    {player.username}
-                    {player.isLocal && <span className="you-pill ml-1.5 text-xs font-mono text-sky-400 font-bold">[YOU]</span>}
-                    {player.isHost && <span className="host-pill ml-1 text-xs font-mono text-amber-400 font-bold">👑</span>}
-                  </span>
-                  <span className="round-player-dist font-mono text-xs text-slate-400">
-                    {player.distanceKm != null ? `${Math.round(player.distanceKm)} km` : "MISSED"}
-                  </span>
-                  <span className="round-player-score font-mono text-sm font-bold text-sky-400 text-right">
-                    {(player.totalScore || 0).toLocaleString()} PTS
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
+          <RoundResultsLeaderboard
+            currentLeaderboard={currentLeaderboard}
+            currentRound={currentRound}
+          />
         </div>
 
         <div className="result-actions mt-2 flex flex-col sm:flex-row gap-3">

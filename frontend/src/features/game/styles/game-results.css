@@ -97,6 +97,26 @@
   padding: 12px;
 }
 
+.round-leaderboard-header {
+  display: grid;
+  grid-template-columns: 36px 1fr 65px 75px 85px;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 10px 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 6px;
+  font-family: var(--heading);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.round-header-dist { text-align: right; }
+.round-header-added { text-align: right; color: var(--acid); }
+.round-header-score { text-align: right; color: var(--cyan); }
+
 .round-leaderboard-list {
   display: flex;
   flex-direction: column;
@@ -105,7 +125,7 @@
 
 .round-leaderboard-item {
   display: grid;
-  grid-template-columns: 38px 1fr 75px 85px;
+  grid-template-columns: 36px 1fr 65px 75px 85px;
   align-items: center;
   gap: 8px;
   padding: 7px 10px;
@@ -124,7 +144,26 @@
 .round-rank { font-family: var(--heading); font-weight: 700; font-size: 13px; }
 .round-player-name { font-weight: 600; color: #f2f5f0; }
 .round-player-dist { font-family: var(--heading); font-size: 12px; color: var(--muted); text-align: right; }
-.round-player-score { font-family: var(--heading); font-size: 15px; font-weight: 800; color: var(--cyan); text-align: right; }
+.round-player-added { font-family: var(--heading); font-size: 13px; font-weight: 800; color: var(--acid); text-align: right; }
+.round-player-score { font-family: var(--heading); font-size: 14px; font-weight: 800; color: var(--cyan); text-align: right; }
+
+@media (max-width: 639px) {
+  .round-leaderboard-header {
+    grid-template-columns: 24px 1fr 44px 50px 52px;
+    gap: 4px;
+    padding: 4px 6px 6px;
+    font-size: 10px;
+  }
+  .round-leaderboard-item {
+    grid-template-columns: 24px 1fr 44px 50px 52px;
+    gap: 4px;
+    padding: 6px 6px;
+    font-size: 12px;
+  }
+  .round-player-dist { font-size: 11px; }
+  .round-player-added { font-size: 11px; }
+  .round-player-score { font-size: 12px; }
+}
 
 .result-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .result-actions .game-button { width: 100%; }
