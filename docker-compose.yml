@@ -13,7 +13,6 @@ services:
     ports:
       - "80:80"
       - "443:443"
-      - "3000:80"
     volumes:
       - /etc/letsencrypt:/etc/letsencrypt-host:ro
     depends_on:
@@ -35,7 +34,7 @@ services:
           - backend
           - gateway
     ports:
-      - "5000:5000"
+      - "127.0.0.1:5000:5000"
     environment:
       PORT: 5000
       INTERNAL_CLUSTER_SECRET: ${INTERNAL_CLUSTER_SECRET}
