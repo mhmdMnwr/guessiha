@@ -120,7 +120,7 @@ services:
   # High-Performance Geographical Database (PostgreSQL 16 + PostGIS)
   # Internal IP: 172.28.0.14
   geo-db:
-    image: postgis/postgis:16-3.4-alpine
+    image: imresamu/postgis:16-3.4-alpine  # multi-arch: arm64 + amd64
     container_name: guessiha-geo-db
     networks:
       guessiha_net:
