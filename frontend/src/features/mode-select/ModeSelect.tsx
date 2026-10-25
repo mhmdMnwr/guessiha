@@ -7,6 +7,11 @@ import { SupportDeveloperPanel } from "./components/SupportDeveloperPanel"
 
 type MenuModal = "feedback" | "support" | null
 
+const RANDOM_CALLSIGNS = [
+  "VIPER", "GHOST", "NOMAD", "SPECTRE", "FALCON", "TITAN",
+  "APEX", "COBRA", "SHADOW", "ECHO", "HUNTER", "RAVEN"
+]
+
 interface ModeSelectProps {
   isLaunching: boolean
   onContinue: () => void
@@ -36,6 +41,12 @@ export function ModeSelect({
     onContinue()
   }
 
+  const handleRandomizeName = () => {
+    const prefix = RANDOM_CALLSIGNS[Math.floor(Math.random() * RANDOM_CALLSIGNS.length)]
+    const suffix = Math.floor(10 + Math.random() * 90)
+    setUsername(`${prefix}-${suffix}`)
+  }
+
   return (
     <main className={`entry-screen ${isLaunching ? "entry-screen--launching" : ""}`}>
       <EffectsLayer />
@@ -48,19 +59,11 @@ export function ModeSelect({
           </span>
           <span>guessiha</span>
         </div>
-        <label className="entry-operative-pill" title="Click to change your codename">
+        <div className="entry-operative-pill" title="Network status">
           <span className="entry-status-dot" />
-          <span className="text-slate-400">CODENAME:</span>
-          <input
-            aria-label="Player Codename"
-            className="bg-transparent text-sky-400 font-bold uppercase tracking-wider outline-none w-32 sm:w-40 border-b border-transparent focus:border-sky-400 transition-colors"
-            maxLength={18}
-            onChange={(e) => setUsername(e.target.value)}
-            placeholder="ENTER CODENAME"
-            type="text"
-            value={username}
-          />
-        </label>
+          <span className="text-slate-400">NETWORK:</span>
+          <span className="text-emerald-400 font-bold tracking-wider">ONLINE</span>
+        </div>
       </header>
 
       <section className="entry-content">
@@ -71,6 +74,34 @@ export function ModeSelect({
           <p className="entry-subtitle">
             Drop into unknown roads worldwide. Read the terrain, lock your coordinates, and outscore your squad in real time.
           </p>
+
+          <div className="username-input-bar">
+            <span className="username-input-icon">
+              <Icon name="players" size={20} />
+            </span>
+            <input
+              aria-label="Username"
+              className="username-input-field"
+              maxLength={18}
+              onChange={(e) => setUsername(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handlePlayClick()
+              }}
+              placeholder="ENTER YOUR USERNAME"
+              type="text"
+              value={username}
+              autoComplete="off"
+              spellCheck="false"
+            />
+            <button
+              type="button"
+              className="username-random-btn"
+              onClick={handleRandomizeName}
+              title="Generate random name"
+            >
+              🎲
+            </button>
+          </div>
 
           {usernameError && (
             <div className="mt-4 p-3 bg-rose-950/90 border border-rose-500 rounded-lg text-rose-300 text-xs font-mono">

@@ -174,3 +174,76 @@
     gap: 14px;
   }
 }
+
+/* ==========================================================================
+   SIMPLE USERNAME INPUT BAR — Direct, sleek, no boring descriptions
+   ========================================================================== */
+
+.username-input-bar {
+  margin-top: clamp(16px, 2.5vh, 26px);
+  width: 100%;
+  min-height: clamp(52px, 6.5vh, 64px);
+  padding: 0 clamp(14px, 1.6vw, 20px);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(14, 20, 23, 0.88);
+  border: 1px solid var(--line, #273237);
+  border-left: 4px solid var(--cyan, #43dcff);
+  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%);
+  transition: all 180ms ease;
+}
+
+.username-input-bar:focus-within {
+  border-color: #475569;
+  border-left-color: var(--cyan, #43dcff);
+  background: #131b1e;
+  box-shadow: 0 0 20px rgba(67, 220, 255, 0.12);
+}
+
+.username-input-icon {
+  display: grid;
+  place-items: center;
+  color: var(--cyan, #43dcff);
+  flex-shrink: 0;
+}
+
+.username-input-field {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #ffffff;
+  font-family: monospace;
+  font-size: clamp(14px, 1.1vw, 17px);
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.username-input-field::placeholder {
+  color: #64748b;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+.username-random-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #cbd5e1;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 150ms ease;
+}
+
+.username-random-btn:hover {
+  background: rgba(67, 220, 255, 0.2);
+  border-color: var(--cyan, #43dcff);
+  transform: scale(1.05);
+}
