@@ -105,6 +105,10 @@ export class GameService {
     if (!targetRoom.recentLocationKeys) {
       targetRoom.recentLocationKeys = new Set<string>();
     }
+    // Cap recent keys so after many games the pool doesn't get fully exhausted
+    if (targetRoom.recentLocationKeys.size > 1500) {
+      targetRoom.recentLocationKeys.clear();
+    }
 
     targetRoom.selectedLocations = this.roundCoordinator.selectDiverseLocations(
       pool,

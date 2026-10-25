@@ -131,7 +131,7 @@ export class GeoDatabaseService implements OnModuleInit {
   async getLocations(options: { region?: string; difficulty?: string; limit?: number }): Promise<GeoLocation[]> {
     const region = this.normalizeRegion(options.region);
     const difficulty = (options.difficulty || 'all').toLowerCase().trim();
-    const queryLimit = options.limit || 500;
+    const queryLimit = options.limit || 3000;
 
     if (!this.pool) {
       await this.initPostgresConnection();
