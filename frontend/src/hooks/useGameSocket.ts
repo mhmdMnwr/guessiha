@@ -21,6 +21,8 @@ export function useGameSocket(
   const clientPublicKeyRef = useRef<string | null>(null)
   const aesKeyRef = useRef<CryptoKey | null>(null)
   const pendingUsernameCheckRef = useRef<((available: boolean) => void) | null>(null)
+  const stateRef = useRef(state)
+  stateRef.current = state
 
   useEffect(() => {
     generateClientEcdhKeyPair()
@@ -99,6 +101,7 @@ export function useGameSocket(
     bindLobbySocketEvents({
       socket,
       state,
+      stateRef,
       ecdhKeyPairRef,
       aesKeyRef,
       pendingUsernameCheckRef,

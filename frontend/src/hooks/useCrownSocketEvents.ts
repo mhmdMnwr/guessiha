@@ -11,7 +11,7 @@ export function bindCrownSocketEvents(ctx: LobbySocketContext) {
       claimantPublicId: data.claimantPublicId,
       timeoutSeconds: data.timeoutSeconds || 4,
     })
-    ctx.addToast(`⚠️ Operative "${data.claimantUsername}" demands the Crown!`, "warning")
+    ctx.addToast(`⚠️ Player "${data.claimantUsername}" demands the Crown!`, "warning")
   })
 
   socket.on("crown_demand_sent", (data: any) => {
@@ -65,7 +65,7 @@ export function bindCrownSocketEvents(ctx: LobbySocketContext) {
     if (isMe) {
       ctx.addToast("👑 You are now the Squad Leader!", "success")
     } else {
-      ctx.addToast(`👑 Operative "${data.newHost}" is now the Squad Leader.`, "info")
+      ctx.addToast(`👑 Player "${data.newHost}" is now the Squad Leader.`, "info")
     }
   })
 }

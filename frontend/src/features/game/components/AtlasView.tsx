@@ -58,6 +58,16 @@ export function AtlasView({
       </header>
 
       <div className="atlas-map-container">
+        <button
+          aria-label="Back to Street View"
+          className="atlas-map-back-btn hidden md:inline-flex"
+          onClick={onCloseAtlas}
+          type="button"
+        >
+          <Icon name="back" size={16} />
+          <span>STREET VIEW [G]</span>
+        </button>
+
         <LeafletMapView
           interactive={!hasGuessed}
           onSelectCoords={onSelectCoords}

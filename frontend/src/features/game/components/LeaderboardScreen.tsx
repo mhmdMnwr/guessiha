@@ -57,7 +57,7 @@ export function LeaderboardScreen({
         </>
       ) : (
         <div className="mt-12 p-8 text-center font-mono text-slate-400 border border-slate-800 rounded-xl bg-slate-900/60">
-          WAITING FOR OPERATIVES TO COMMENCE EXPEDITION...
+          WAITING FOR PLAYERS TO COMMENCE EXPEDITION...
         </div>
       )}
     </section>

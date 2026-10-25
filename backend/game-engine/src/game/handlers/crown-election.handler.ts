@@ -16,7 +16,7 @@ export class CrownElectionHandler {
 
     const player = room.players[clientId];
     if (!player || !player.connected) {
-      socket.emit('error_message', { message: 'You must be a connected operative in this squad.' });
+      socket.emit('error_message', { message: 'You must be a connected player in this squad.' });
       return;
     }
 
@@ -62,7 +62,7 @@ export class CrownElectionHandler {
     };
     room.crownElection = election;
 
-    this.logger.log(`[Room ${room.id}] Operative ${player.username} demanded the Crown from ${host.username}`);
+    this.logger.log(`[Room ${room.id}] Player ${player.username} demanded the Crown from ${host.username}`);
 
     // Notify the host with a 4-second decision window
     if (host.socketId) {

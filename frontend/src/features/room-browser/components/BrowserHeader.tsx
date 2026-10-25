@@ -28,7 +28,7 @@ export default function BrowserHeader({
       <label className="mobile-codename-chip" title="Click to edit your codename">
         <span className="mobile-dot" />
         <input
-          aria-label="Operative Codename"
+          aria-label="Player Codename"
           className="mobile-codename-input"
           maxLength={18}
           onChange={(e) => onUsernameChange?.(e.target.value)}

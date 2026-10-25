@@ -10,6 +10,7 @@ import { bindCrownSocketEvents } from "./useCrownSocketEvents"
 export interface LobbySocketContext {
   socket: Socket
   state: AppState
+  stateRef: MutableRefObject<AppState>
   ecdhKeyPairRef: MutableRefObject<CryptoKeyPair | null>
   aesKeyRef: MutableRefObject<CryptoKey | null>
   pendingUsernameCheckRef: MutableRefObject<((available: boolean) => void) | null>
@@ -42,13 +43,21 @@ export function bindLobbySocketEvents(ctx: LobbySocketContext) {
     state.setIsCheckingUsername(false)
     ctx.pendingUsernameCheckRef.current?.(data.available)
     ctx.pendingUsernameCheckRef.current = null
-    state.setUsernameError(data.available ? null : `Codename "${data.username}" is already taken by another operative.`)
+    state.setUsernameError(data.available ? null : `Codename "${data.username}" is already taken by another player.`)
   })
 
   socket.on("lobbies_list", (list: Room[]) => state.setLobbies(list || []))
   socket.on("room_code_lookup_result", (data: any) => state.setSearchedRoom(data?.room || null))
 
   socket.on("lobby_joined", async (data: any) => {
+    const cur = ctx.stateRef.current
+    const isHostRole = Boolean(data.isHost) || data.role === "HOST"
+    if (!isHostRole && !cur.isCreatingRoom && cur.screen !== "pending" && cur.pendingRoomId !== data.roomId && cur.activeRoom?.id !== data.roomId) {
+      console.warn("Discarding late lobby_joined for cancelled room:", data.roomId)
+      socket.emit("leave_lobby", { roomId: data.roomId, clientId: cur.clientId })
+      return
+    }
+
     state.setActiveRoom({
       id: data.roomId,
       code: data.code || data.roomId,
@@ -68,7 +77,16 @@ export function bindLobbySocketEvents(ctx: LobbySocketContext) {
     state.setIsCreatingRoom(false)
     state.setShowCreateModal(false)
     state.setPendingRoomName(null)
+    state.setPendingRoomId(null)
     state.setSearchedRoom(null)
+
+    if (Array.isArray(data.pendingAdmissions)) {
+      state.setPendingRequests(data.pendingAdmissions.map((p: any) => ({
+        clientId: p.clientId,
+        username: p.username,
+        requestedAt: p.requestedAt || Date.now(),
+      })))
+    }
 
     setStoredActiveRoom(data.roomId, Boolean(data.isHost))
     state.updateScreen(data.status === "LOBBY" ? "lobby" : "game", data.roomId)
@@ -85,6 +103,13 @@ export function bindLobbySocketEvents(ctx: LobbySocketContext) {
 
   socket.on("lobby_update", (data: any) => {
     state.setRoomPlayers(data.players || [])
+    if (Array.isArray(data.pendingAdmissions)) {
+      state.setPendingRequests(data.pendingAdmissions.map((p: any) => ({
+        clientId: p.clientId,
+        username: p.username,
+        requestedAt: p.requestedAt || Date.now(),
+      })))
+    }
     state.setActiveRoom((prev) =>
       prev ? {
         ...prev,
@@ -112,28 +137,44 @@ export function bindLobbySocketEvents(ctx: LobbySocketContext) {
 
   socket.on("admission_pending", (data: any) => {
     state.setPendingRoomName(data?.roomName || "the squad")
+    state.setPendingRoomId(data?.roomId || null)
     state.updateScreen("pending")
   })
 
   socket.on("admission_rejected", (data: any) => {
     state.setPendingRoomName(null)
+    state.setPendingRoomId(null)
     alert(data?.message || "Your request to join was rejected by the Squad Leader.")
     state.updateScreen("browser", undefined, true)
+  })
+
+  socket.on("admission_cancelled", (data: any) => {
+    state.setPendingRequests((prev) =>
+      prev.filter((r) => r.clientId !== data.clientId && (!data.username || r.username !== data.username))
+    )
+    if (data.username) {
+      ctx.addToast(`Player "${data.username}" cancelled their entry request`, "info")
+    }
   })
 
   socket.on("admission_request", (data: any) => {
     state.setPendingRequests((prev) =>
       prev.some((r) => r.clientId === data.clientId)
         ? prev
-        : [...prev, { clientId: data.clientId, username: data.username, requestedAt: data.requestedAt }],
+        : [...prev, { clientId: data.clientId, username: data.username, requestedAt: data.requestedAt || Date.now() }],
     )
-    ctx.addToast(`Operative "${data.username}" requested entry to squad`, "warning")
+    ctx.addToast(`Player "${data.username}" requested entry to squad`, "warning")
   })
 
-  socket.on("player_entered_lobby", (d: any) => ctx.addToast(`Operative "${d.username}" entered the squad!`, "success"))
-  socket.on("player_joined", (d: any) => ctx.addToast(`Operative "${d.username}" joined the match!`, "info"))
-  socket.on("player_left", (d: any) => ctx.addToast(`Operative "${d.username || "An operative"}" left the squad.`, "info"))
+  socket.on("player_entered_lobby", (d: any) => ctx.addToast(`Player "${d.username}" entered the squad!`, "success"))
+  socket.on("player_joined", (d: any) => ctx.addToast(`Player "${d.username}" joined the match!`, "info"))
+  socket.on("player_left", (d: any) => ctx.addToast(`Player "${d.username || "A player"}" left the squad.`, "info"))
   socket.on("lobby_terminated", (data: any) => {
+    const cur = ctx.stateRef.current
+    // If we are in the middle of creating a NEW room (isCreatingRoom) or already successfully
+    // joined a different room, ignore terminated events for the old room.
+    if (cur.isCreatingRoom) return
+    if (cur.activeRoom && data?.roomId && cur.activeRoom.id !== data.roomId) return
     alert(data?.message || data?.reason || "Squad leader has disconnected. Expedition disbanded.")
     clearSessionToBrowser()
   })

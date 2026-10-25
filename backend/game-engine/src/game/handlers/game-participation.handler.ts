@@ -13,7 +13,7 @@ export class GameParticipationHandler {
     const player = room.players[clientId];
 
     if (!player) {
-      socket.emit('error_message', { message: 'Operative not found in squad.' });
+      socket.emit('error_message', { message: 'Player not found in squad.' });
       return;
     }
     if (room.status === 'LOBBY') {

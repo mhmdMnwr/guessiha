@@ -61,15 +61,26 @@ export class LobbySocketHandler {
 
     const existing = this.gameService.roomStore.findRoomByPlayer(clientId);
     if (existing) {
-      socket.emit('error_message', {
-        message: 'You are already in an active squad. Leave your current squad before creating a new one.',
-      });
-      return;
+      // Auto-clean stale/ghost rooms instead of rejecting — prevents "already in squad" errors after refreshes
+      // Leave the old room channel FIRST so the creating socket does not receive lobby_terminated
+      socket.leave(existing.id);
+      const isStaleHost = existing.hostId === clientId || existing.hostSocketId === socket.id;
+      if (isStaleHost) {
+        this.gameService.terminateLobby(existing.id, server, 'Squad Leader started a new session. Previous room closed.');
+      } else {
+        delete existing.players[clientId];
+        if (Object.keys(existing.players).length === 0) {
+          this.gameService.deleteRoom(existing.id);
+          server.emit('lobbies_list', this.gameService.getLobbiesList());
+        } else {
+          this.gameService.broadcastLobbyUpdate(server, existing);
+        }
+      }
     }
 
     const allRooms = Array.from(this.gameService.roomStore.customRooms.values());
     if (isCallsignTaken(allRooms, username, clientId)) {
-      socket.emit('error_message', { message: `Codename "${username}" is already claimed by an active operative.` });
+      socket.emit('error_message', { message: `Codename "${username}" is already claimed by an active player.` });
       return;
     }
 
@@ -148,7 +159,7 @@ export class LobbySocketHandler {
       }
     }
 
-    const username = String(data?.username || 'Operative').trim();
+    const username = String(data?.username || 'Player').trim();
     if (!username || username.length < 2) {
       socket.emit('error_message', { message: 'Username must be at least 2 characters.' });
       return;
@@ -168,7 +179,7 @@ export class LobbySocketHandler {
 
     const activeCount = Object.values(targetRoom.players).filter((p) => p && p.connected).length;
     if (activeCount >= (targetRoom.maxPlayers || 8)) {
-      socket.emit('error_message', { message: `Squad is at maximum capacity (${targetRoom.maxPlayers || 8} operatives).` });
+      socket.emit('error_message', { message: `Squad is at maximum capacity (${targetRoom.maxPlayers || 8} players).` });
       return;
     }
 
@@ -219,7 +230,28 @@ export class LobbySocketHandler {
       return;
     }
 
-    if (room.pendingAdmissions[clientId]) delete room.pendingAdmissions[clientId];
+    if (room.pendingAdmissions) {
+      const targetKey = room.pendingAdmissions[clientId]
+        ? clientId
+        : Object.keys(room.pendingAdmissions).find((k) => {
+            const p = room.pendingAdmissions[k];
+            return p?.socketId === socket.id || (data?.username && p?.username === data.username);
+          });
+      if (targetKey && room.pendingAdmissions[targetKey]) {
+        const pendingUser = room.pendingAdmissions[targetKey]?.username;
+        delete room.pendingAdmissions[targetKey];
+        const cancelPayload = {
+          roomId: room.id,
+          clientId: targetKey,
+          username: pendingUser,
+          message: `Player "${pendingUser || targetKey}" cancelled their entry request.`,
+        };
+        server.to(room.id).emit('admission_cancelled', cancelPayload);
+        if (room.hostSocketId) {
+          server.to(room.hostSocketId).emit('admission_cancelled', cancelPayload);
+        }
+      }
+    }
 
     if (room.crownElection && (clientId === room.crownElection.claimantId || clientId === room.crownElection.targetHostId)) {
       if (room.crownElection.hostTimeout) clearTimeout(room.crownElection.hostTimeout);
@@ -233,9 +265,11 @@ export class LobbySocketHandler {
       room.lastCrownElectionAt = Date.now();
     }
 
-    const wasHost = (room.hostId && clientId === room.hostId) ||
-      (room.hostSocketId && socket.id === room.hostSocketId) ||
-      Boolean(data?.isHost && (clientId === room.hostId || socket.id === room.hostSocketId || room.hostName === data?.username));
+    // Only use hard identifiers — never trust username match or client-supplied isHost flag alone
+    const wasHost = Boolean(
+      (room.hostId && clientId === room.hostId) ||
+      (room.hostSocketId && socket.id === room.hostSocketId)
+    );
 
     if (wasHost) {
       this.gameService.terminateLobby(room.id, server, 'Squad Leader has left the room. Expedition disbanded.');

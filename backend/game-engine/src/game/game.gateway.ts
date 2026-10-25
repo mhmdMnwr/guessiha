@@ -253,6 +253,11 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.admissionHandler.handleRejectPlayer(socket, this.server, data);
   }
 
+  @SubscribeMessage('cancel_admission_request')
+  handleCancelAdmissionRequest(@ConnectedSocket() socket: Socket, @MessageBody() data: any) {
+    this.admissionHandler.handleCancelAdmissionRequest(socket, this.server, data);
+  }
+
   @SubscribeMessage('demand_crown')
   handleDemandCrown(@ConnectedSocket() socket: Socket, @MessageBody() data?: any) {
     const room = this.resolveRoom(socket, data);

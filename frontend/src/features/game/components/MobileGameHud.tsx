@@ -35,7 +35,7 @@ export default function MobileGameHud({
 
   const handleExit = () => {
     if (isHost) {
-      if (window.confirm("Stop the match and return all operatives to the squad lobby?")) {
+      if (window.confirm("Stop the match and return all players to the squad lobby?")) {
         onReturnToLobby?.()
       }
     } else {

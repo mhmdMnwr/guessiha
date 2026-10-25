@@ -7,28 +7,28 @@ import { RedisService } from '../redis/redis.service';
 
 const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY || '';
 
-// Guaranteed verified Algerian 360° panoramas
+// Guaranteed verified Algerian road and highway 360° panoramas
 const GUARANTEED_ALGERIA_PANOS: Array<{ lat: number; lng: number }> = [
-  { lat: 36.768293, lng: 3.053982 }, // Algiers Didouche Mourad
-  { lat: 36.775295, lng: 3.059759 }, // Grande Poste d'Alger
-  { lat: 36.745892, lng: 3.069648 }, // Maqam Echahid
-  { lat: 36.800926, lng: 3.042637 }, // Notre-Dame d'Afrique
-  { lat: 35.709468, lng: -0.663401 }, // Santa Cruz Oran
-  { lat: 35.703992, lng: -0.648909 }, // Front de Mer Oran
-  { lat: 36.371255, lng: 6.613816 }, // Sidi M'Cid Constantine
-  { lat: 36.366653, lng: 6.614562 }, // Passerelle Mellah Slimane
-  { lat: 36.882228, lng: 7.745358 }, // Basilique Saint-Augustin Annaba
-  { lat: 34.881572, lng: -1.311310 }, // Palais El Mechouar Tlemcen
-  { lat: 36.592817, lng: 2.441838 }, // Ruines Romaines Tipaza
-  { lat: 35.484972, lng: 6.466991 }, // Ruines Romaines Timgad Batna
-  { lat: 36.321243, lng: 5.736128 }, // Ruines Romaines Djemila Setif
-  { lat: 32.491684, lng: 3.673809 }, // Ksar Ghardaïa M'Zab
-  { lat: 29.264177, lng: 0.231575 }, // Timimoun Ksar
-  { lat: 24.553909, lng: 9.485123 }, // Djanet Oasis
-  { lat: 22.785412, lng: 5.522941 }, // Tamanrasset Hoggar
-  { lat: 31.616667, lng: -2.216667 }, // Taghit Dunes Béchar
-  { lat: 36.751310, lng: 3.016823 }, // Ben Aknoun Algiers
-  { lat: 35.699961, lng: -0.646955 }, // Place d'Armes Oran
+  { lat: 36.768293, lng: 3.053982 }, // Algiers - Rue Didouche Mourad
+  { lat: 36.773102, lng: 3.061167 }, // Algiers - Boulevard Colonel Amirouche
+  { lat: 36.662320, lng: 3.094719 }, // Algiers - Route Nationale 1 (Baraki)
+  { lat: 36.714159, lng: 3.138192 }, // Algiers - Rocade Sud (El Harrach Interchange)
+  { lat: 36.764595, lng: 3.029768 }, // Algiers - Boulevard Bougara (El Biar)
+  { lat: 36.713435, lng: 2.836479 }, // Algiers - Corniche de Zéralda
+  { lat: 36.751310, lng: 3.016823 }, // Algiers - Val d'Hydra / Ben Aknoun
+  { lat: 35.703992, lng: -0.648909 }, // Oran - Front de Mer, Boulevard de l'ALN
+  { lat: 35.701496, lng: -0.640620 }, // Oran - Boulevard de la Soummam
+  { lat: 35.738740, lng: -0.701079 }, // Oran - Route de la Corniche (Mers El Kébir)
+  { lat: 35.719913, lng: -0.580803 }, // Oran - Boulevard Millenium (Bir El Djir)
+  { lat: 35.822192, lng: -0.489705 }, // Oran - Route de Kristel
+  { lat: 36.372052, lng: 6.611973 }, // Constantine - Boulevard de l'Abîme
+  { lat: 36.372399, lng: 6.623417 }, // Constantine - Route Nationale 3 (Gorges)
+  { lat: 36.487027, lng: 5.280168 }, // Béjaïa - Route Nationale 9 (Gorges de Kherrata)
+  { lat: 36.607405, lng: 2.407850 }, // Tipaza - Corniche du Mont Chenoua
+  { lat: 36.897244, lng: 7.770194 }, // Annaba - Avenue de l'ALN
+  { lat: 36.153165, lng: 5.679943 }, // Sétif - Boulevard Commercial
+  { lat: 35.278173, lng: 6.541061 }, // Batna - Route d'Arris
+  { lat: 35.103163, lng: -1.857636 }, // Tlemcen - Corniche de Ghazaouet
 ];
 
 @Controller('api/streetview')
@@ -120,7 +120,7 @@ export class StreetViewController {
       return Promise.resolve(null);
     }
     return new Promise((resolve) => {
-      const url = `https://maps.googleapis.com/maps/api/streetview/metadata?location=${lat},${lng}&radius=${radius}&key=${GOOGLE_API_KEY}`;
+      const url = `https://maps.googleapis.com/maps/api/streetview/metadata?location=${lat},${lng}&radius=${radius}&source=outdoor&key=${GOOGLE_API_KEY}`;
       const req = https.get(url, { timeout: 2500 }, (res) => {
         let raw = '';
         res.on('data', (c) => (raw += c));

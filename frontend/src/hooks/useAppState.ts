@@ -36,6 +36,7 @@ export function useAppState() {
   const [username, setUsername] = useState(() => getInitialUsername())
   const [usernameError, setUsernameError] = useState<string | null>(null)
   const [pendingRoomName, setPendingRoomName] = useState<string | null>(null)
+  const [pendingRoomId, setPendingRoomId] = useState<string | null>(null)
   const [pendingRequests, setPendingRequests] = useState<PendingRequest[]>([])
   const [isCheckingUsername, setIsCheckingUsername] = useState(false)
 
@@ -85,6 +86,7 @@ export function useAppState() {
     username, setUsername,
     usernameError, setUsernameError,
     pendingRoomName, setPendingRoomName,
+    pendingRoomId, setPendingRoomId,
     pendingRequests, setPendingRequests,
     isCheckingUsername, setIsCheckingUsername,
     lobbies, setLobbies,

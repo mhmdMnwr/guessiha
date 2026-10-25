@@ -59,7 +59,7 @@ export class AdmissionHandler {
       hostName: room.hostName,
       isHost: Boolean(isHost),
       maxPlayers: room.maxPlayers,
-      role: isHost ? 'HOST' : 'OPERATIVE',
+      role: isHost ? 'HOST' : 'PLAYER',
       serverPublicKey,
       players: this.gameService.getLobbyPlayers(room),
       selectedRegion: room.selectedRegion,
@@ -90,16 +90,30 @@ export class AdmissionHandler {
       return;
     }
 
-    const pending = room.pendingAdmissions[data?.targetClientId];
+    if (!room.pendingAdmissions) {
+      room.pendingAdmissions = {};
+    }
+
+    const targetClientId = data?.targetClientId;
+    const pending = room.pendingAdmissions[targetClientId];
     if (!pending) {
-      socket.emit('error_message', { message: 'No pending admission for that operative.' });
+      socket.emit('error_message', { message: 'Player is no longer requesting admission or has cancelled.' });
+      socket.emit('admission_cancelled', {
+        roomId: room.id,
+        clientId: targetClientId,
+      });
       return;
     }
 
     const pendingSocket = server.sockets.sockets.get(pending.socketId);
-    delete room.pendingAdmissions[data.targetClientId];
+    delete room.pendingAdmissions[targetClientId];
 
     if (!pendingSocket) {
+      socket.emit('error_message', { message: 'Player is no longer connected.' });
+      socket.emit('admission_cancelled', {
+        roomId: room.id,
+        clientId: targetClientId,
+      });
       this.gameService.broadcastLobbyUpdate(server, room);
       return;
     }
@@ -118,10 +132,21 @@ export class AdmissionHandler {
       return;
     }
 
-    const pending = room.pendingAdmissions[data?.targetClientId];
-    if (!pending) return;
+    if (!room.pendingAdmissions) {
+      room.pendingAdmissions = {};
+    }
 
-    delete room.pendingAdmissions[data.targetClientId];
+    const targetClientId = data?.targetClientId;
+    const pending = room.pendingAdmissions[targetClientId];
+    if (!pending) {
+      socket.emit('admission_cancelled', {
+        roomId: room.id,
+        clientId: targetClientId,
+      });
+      return;
+    }
+
+    delete room.pendingAdmissions[targetClientId];
     const pendingSocket = server.sockets.sockets.get(pending.socketId);
     if (pendingSocket) {
       pendingSocket.emit('admission_rejected', {
@@ -130,6 +155,77 @@ export class AdmissionHandler {
       });
     }
     this.gameService.broadcastLobbyUpdate(server, room);
+  }
+
+  handleCancelAdmissionRequest(socket: Socket, server: Server, data: any) {
+    const clientId = data?.clientId || getClientId(socket);
+    const roomId = data?.roomId;
+
+    let targetRoom: GameRoom | null = roomId ? this.gameService.getRoom(roomId) : null;
+    if (!targetRoom) {
+      for (const r of this.gameService.roomStore.customRooms.values()) {
+        if (
+          r.pendingAdmissions &&
+          (r.pendingAdmissions[clientId] ||
+            (data?.username && Object.values(r.pendingAdmissions).some((p) => p.username === data.username)) ||
+            Object.values(r.pendingAdmissions).some((p) => p.socketId === socket.id))
+        ) {
+          targetRoom = r;
+          break;
+        }
+      }
+    }
+
+    if (!targetRoom || !targetRoom.pendingAdmissions) return;
+
+    let targetKey: string | null = null;
+    if (targetRoom.pendingAdmissions[clientId]) {
+      targetKey = clientId;
+    } else {
+      const found = Object.keys(targetRoom.pendingAdmissions).find((k) => {
+        const p = targetRoom.pendingAdmissions[k];
+        return p?.socketId === socket.id || (data?.username && p?.username === data.username);
+      });
+      if (found) targetKey = found;
+    }
+
+    if (!targetKey || !targetRoom.pendingAdmissions[targetKey]) return;
+
+    const pending = targetRoom.pendingAdmissions[targetKey];
+    delete targetRoom.pendingAdmissions[targetKey];
+
+    socket.leave(targetRoom.id);
+
+    const cancelPayload = {
+      roomId: targetRoom.id,
+      clientId: targetKey,
+      username: pending.username,
+      message: `Player "${pending.username}" cancelled their entry request.`,
+    };
+
+    // 1. Emit to entire room so host definitely receives it
+    server.to(targetRoom.id).emit('admission_cancelled', cancelPayload);
+
+    // 2. Direct emit to hostSocketId if known
+    if (targetRoom.hostSocketId) {
+      server.to(targetRoom.hostSocketId).emit('admission_cancelled', cancelPayload);
+    }
+
+    // 3. Direct emit to any host socket by hostId
+    if (targetRoom.hostId) {
+      for (const s of server.sockets.sockets.values()) {
+        if (getClientId(s) === targetRoom.hostId) {
+          s.emit('admission_cancelled', cancelPayload);
+        }
+      }
+    }
+
+    socket.emit('admission_cancelled_ack', {
+      roomId: targetRoom.id,
+      success: true,
+    });
+
+    this.gameService.broadcastLobbyUpdate(server, targetRoom);
   }
 
   getClientId = getClientId;

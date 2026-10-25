@@ -120,12 +120,39 @@ export function useGameActions({
     handleAdmitPlayer: (id: string) => { socketRef.current?.emit("admit_player", { roomId: state.activeRoom?.id, targetClientId: id }); state.setPendingRequests((p) => p.filter((r) => r.clientId !== id)) },
     handleRejectPlayer: (id: string) => { socketRef.current?.emit("reject_player", { roomId: state.activeRoom?.id, targetClientId: id }); state.setPendingRequests((p) => p.filter((r) => r.clientId !== id)) },
     handleSearchRoomByCode: (code: string) => code.trim().length >= 6 ? socketRef.current?.emit("find_room_by_code", { code: code.trim() }) : state.setSearchedRoom(null),
-    handleJoinByCode: (code: string) => socketRef.current?.emit("join_lobby", { roomId: code.trim(), username: state.username, clientPublicKey: clientPublicKeyRef.current || "" }),
+    handleJoinByCode: (code: string) => {
+      const cleanCode = code.trim()
+      state.setPendingRoomId(cleanCode)
+      socketRef.current?.emit("join_lobby", { roomId: cleanCode, username: state.username, clientPublicKey: clientPublicKeyRef.current || "" })
+    },
     handleDemandCrown: () => { state.setCrownClaimPending(true); socketRef.current?.emit("demand_crown", { roomId: state.activeRoom?.id }) },
     handleRespondCrownDemand: (accept: boolean) => { socketRef.current?.emit("respond_crown_demand", { roomId: state.activeRoom?.id, accept }); state.setCrownDemandNotice(null) },
     handleVoteCrown: (vote: "yes" | "no") => { if (!state.hasVotedCrown) { socketRef.current?.emit("vote_crown", { roomId: state.activeRoom?.id, vote }); state.setHasVotedCrown(true) } },
-    handleJoinRoom: (room: Room) => socketRef.current?.emit("join_lobby", { roomId: room.id, username: state.username, clientPublicKey: clientPublicKeyRef.current || "" }),
-    handleCancelPending: () => { state.setPendingRoomName(null); state.updateScreen("browser", undefined, true) },
+    handleJoinRoom: (room: Room) => {
+      state.setPendingRoomId(room.id)
+      state.setPendingRoomName(room.name)
+      socketRef.current?.emit("join_lobby", { roomId: room.id, username: state.username, clientPublicKey: clientPublicKeyRef.current || "" })
+    },
+    handleCancelPending: () => {
+      const roomId = state.pendingRoomId
+      if (socketRef.current) {
+        socketRef.current.emit("cancel_admission_request", {
+          roomId,
+          clientId: state.clientId,
+          username: state.username,
+        })
+        if (roomId) {
+          socketRef.current.emit("leave_lobby", {
+            roomId,
+            clientId: state.clientId,
+            username: state.username,
+          })
+        }
+      }
+      state.setPendingRoomName(null)
+      state.setPendingRoomId(null)
+      state.updateScreen("browser", undefined, true)
+    },
     handleStartMatch: () => state.activeRoom && socketRef.current?.emit("start_game", { roomId: state.activeRoom.id }),
     handleNextRound: () => state.activeRoom && socketRef.current?.emit("next_round", { roomId: state.activeRoom.id }),
     handleKickPlayer: (targetId: string) => state.activeRoom && socketRef.current?.emit("kick_player", { roomId: state.activeRoom.id, targetId }),

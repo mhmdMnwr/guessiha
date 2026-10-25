@@ -30,7 +30,7 @@ export function GamePendingAdmissionPill({
               <button
                 className="game-admission-admit-btn"
                 onClick={() => onAdmitPlayer?.(req.clientId)}
-                title="Admit operative into game"
+                title="Admit player into game"
                 type="button"
               >
                 ✓ ADMIT

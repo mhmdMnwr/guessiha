@@ -89,7 +89,7 @@ export function createPlayer(
     id,
     publicId: toPublicPlayerId(id),
     socketId,
-    username: sanitizeText(username, 18, 'Operative'),
+    username: sanitizeText(username, 18, 'Player'),
     connected: true,
     totalScore: 0,
     currentPin: null,

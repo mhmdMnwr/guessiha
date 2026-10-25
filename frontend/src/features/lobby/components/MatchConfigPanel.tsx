@@ -108,14 +108,14 @@ export function MatchConfigPanel({
       </div>
 
       <div className="config-block">
-        <span className="config-label"><Icon name="players" size={17} /> MAX OPERATIVES</span>
+        <span className="config-label"><Icon name="players" size={17} /> MAX PLAYERS</span>
         <div className="timer-options">
           {CAPACITY_POOL.map((cap) => (
             <button
               className={maxPlayers === cap ? "active" : ""}
               disabled={!isHost} key={cap} onClick={() => onMaxPlayersChange(cap)} type="button"
             >
-              {cap} OPS
+              {cap} PLAYERS
             </button>
           ))}
         </div>

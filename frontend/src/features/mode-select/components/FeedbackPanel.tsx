@@ -21,7 +21,7 @@ export function FeedbackPanel({ username, onBackToPlay }: FeedbackPanelProps) {
     setIsSubmitting(true)
 
     const payload = {
-      username: username || "Operative",
+      username: username || "Player",
       category,
       rating,
       message: message.trim(),
@@ -57,7 +57,7 @@ export function FeedbackPanel({ username, onBackToPlay }: FeedbackPanelProps) {
           </div>
           <h2 className="menu-stage-title">FEEDBACK TRANSMITTED</h2>
           <p className="text-slate-300 text-sm max-w-md">
-            Thank you, <strong className="text-sky-400">{username || "Operative"}</strong>. Your report has been dispatched directly to the guessiha development team.
+            Thank you, <strong className="text-sky-400">{username || "Player"}</strong>. Your report has been dispatched directly to the guessiha development team.
           </p>
           <div className="flex gap-3 mt-3">
             <GameButton onClick={() => { setMessage(""); setSubmitted(false) }} variant="outline">

@@ -32,7 +32,7 @@ export class GuessHandler {
       (k) => k === clientId || room.players[k]?.socketId === socket.id,
     );
     if (!playerKey) {
-      return { ok: false, error: 'Operative not found in this squad.' };
+      return { ok: false, error: 'Player not found in this squad.' };
     }
     const player = room.players[playerKey];
     if (player.hasGuessed) {

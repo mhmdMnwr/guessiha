@@ -94,7 +94,7 @@ export function RoomBrowser({
           <div className="room-table-head">
             <span>SQUAD / HOST</span>
             <span>STATE</span>
-            <span>OPERATIVES</span>
+            <span>PLAYERS</span>
             <span>REGION / DIFF</span>
             <span />
           </div>

@@ -80,7 +80,7 @@ export class GameService {
     this.ensureActiveHost(targetRoom);
     const active = Object.values(targetRoom.players).filter((p) => p && p.connected === true);
     if (active.length === 0) {
-      return { success: false, error: 'At least 1 operative must join before starting.' };
+      return { success: false, error: 'At least 1 player must join before starting.' };
     }
 
     const isAuthorized =

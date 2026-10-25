@@ -4,7 +4,7 @@ import * as crypto from 'crypto';
 import { GameRoom, Player } from '../game.types';
 import { ScoringService } from './scoring.service';
 import { RedisService } from '../../redis/redis.service';
-import { GeoLocation, COUNTRY_TIER_WEIGHTS } from '../../geo-database/geo-database.service';
+import { GeoLocation, COUNTRY_TIER_WEIGHTS, isRoadLocation } from '../../geo-database/geo-database.service';
 import { RoomStoreService } from './room-store.service';
 import { TimerService } from './timer.service';
 import { toPublicPlayerId } from '../factories/lobby.factory';
@@ -99,6 +99,12 @@ export class RoundCoordinatorService {
     const selectedSet = new Set<GeoLocation>();
     const usedCountries = new Set<string>();
 
+    // Non-road cap: user strictly requested non-road 360 images appear only ~1 in 1000 times (0.1% chance)
+    // 99.9% of matches will have 0 non-roads (100% pure verified road gameplay)
+    const allowNonRoad = Math.random() < 0.001;
+    const effectiveMaxNonRoads = allowNonRoad ? 1 : 0;
+    let nonRoadCount = 0;
+
     for (let i = 0; i < count; i++) {
       const targetContinent = continentOrder[i % continentOrder.length];
       const targetDiff = isMixedDifficulty
@@ -110,35 +116,43 @@ export class RoundCoordinatorService {
       );
       const baseCountries =
         allUnusedCountries.length > 0 ? allUnusedCountries : Array.from(byCountry.keys());
+      const needRoad = nonRoadCount >= effectiveMaxNonRoads;
 
-      // 1. Try matching both targetContinent & targetDiff
+      // 1. Try matching both targetContinent & targetDiff (preferring roads if quota reached)
       let eligibleCountries = baseCountries.filter((c) => {
         if (availableRegions.length > 1 && countryRegion.get(c) !== targetContinent) {
           return false;
         }
         const locs = byCountry.get(c)!;
         return locs.some(
-          (l) => !selectedSet.has(l) && (!isMixedDifficulty || l.difficulty === targetDiff),
+          (l) => !selectedSet.has(l) && (!isMixedDifficulty || l.difficulty === targetDiff) && (!needRoad || isRoadLocation(l)),
         );
       });
 
-      // 2. Fallback: match targetContinent with any difficulty
+      // 2. Fallback: match targetContinent with any difficulty (preferring roads if quota reached)
       if (eligibleCountries.length === 0 && availableRegions.length > 1) {
         eligibleCountries = baseCountries.filter(
           (c) =>
             countryRegion.get(c) === targetContinent &&
-            byCountry.get(c)!.some((l) => !selectedSet.has(l)),
+            byCountry.get(c)!.some((l) => !selectedSet.has(l) && (!needRoad || isRoadLocation(l))),
         );
       }
 
-      // 3. Fallback: match any unused country with targetDiff
+      // 3. Fallback: match any unused country with targetDiff (preferring roads if quota reached)
       if (eligibleCountries.length === 0 && isMixedDifficulty) {
         eligibleCountries = baseCountries.filter((c) =>
-          byCountry.get(c)!.some((l) => !selectedSet.has(l) && l.difficulty === targetDiff),
+          byCountry.get(c)!.some((l) => !selectedSet.has(l) && l.difficulty === targetDiff && (!needRoad || isRoadLocation(l))),
         );
       }
 
-      // 4. Final fallback: any country with unselected locations
+      // 4. Fallback: any country with unselected locations (preferring roads if quota reached)
+      if (eligibleCountries.length === 0) {
+        eligibleCountries = baseCountries.filter((c) =>
+          byCountry.get(c)!.some((l) => !selectedSet.has(l) && (!needRoad || isRoadLocation(l))),
+        );
+      }
+
+      // 5. Ultimate fallback if all roads exhausted: any country with unselected locations
       if (eligibleCountries.length === 0) {
         eligibleCountries = baseCountries.filter((c) =>
           byCountry.get(c)!.some((l) => !selectedSet.has(l)),
@@ -157,7 +171,25 @@ export class RoundCoordinatorService {
       const finalCountryCandidates =
         diffMatchedLocs.length > 0 ? diffMatchedLocs : countryLocs;
 
-      const chosenLoc = this.pickFromCountryStratified(finalCountryCandidates);
+      const roadCandidates = finalCountryCandidates.filter(isRoadLocation);
+      const nonRoadCandidates = finalCountryCandidates.filter((l) => !isRoadLocation(l));
+
+      let poolToPick: GeoLocation[];
+      if (nonRoadCount >= effectiveMaxNonRoads) {
+        poolToPick = roadCandidates.length > 0 ? roadCandidates : finalCountryCandidates;
+      } else {
+        // Still within allowance, but non-roads only appear with a 1-in-1000 chance
+        if (Math.random() < 0.001 && nonRoadCandidates.length > 0) {
+          poolToPick = nonRoadCandidates;
+        } else {
+          poolToPick = roadCandidates.length > 0 ? roadCandidates : finalCountryCandidates;
+        }
+      }
+
+      const chosenLoc = this.pickFromCountryStratified(poolToPick);
+      if (!isRoadLocation(chosenLoc)) {
+        nonRoadCount++;
+      }
       selected.push(chosenLoc);
       selectedSet.add(chosenLoc);
     }

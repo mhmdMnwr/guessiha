@@ -23,7 +23,7 @@ export class HostActionHandler {
       (p) => p && (p.publicId === targetId || p.id === targetId),
     );
     if (!target || target.connected !== true) {
-      socket.emit('error_message', { message: 'Cannot transfer host: targeted operative is not connected.' });
+      socket.emit('error_message', { message: 'Cannot transfer host: targeted player is not connected.' });
       return;
     }
 
@@ -99,7 +99,7 @@ export class HostActionHandler {
       (room.hostSocketId && socket.id === room.hostSocketId);
 
     if (!isHost) {
-      socket.emit('error_message', { message: 'Only the Squad Leader can kick operatives.' });
+      socket.emit('error_message', { message: 'Only the Squad Leader can kick players.' });
       return;
     }
 
@@ -111,7 +111,7 @@ export class HostActionHandler {
     );
 
     if (!target) {
-      socket.emit('error_message', { message: 'Operative not found in this squad.' });
+      socket.emit('error_message', { message: 'Player not found in this squad.' });
       return;
     }
 

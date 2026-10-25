@@ -11,12 +11,12 @@ export function RoundResultsLeaderboard({
     <div className="round-leaderboard-container mt-3 mb-3">
       <div className="text-xs font-mono uppercase tracking-widest text-slate-400 mb-2 flex items-center justify-between">
         <span>STANDINGS AFTER ROUND {currentRound}</span>
-        <span className="text-slate-500 font-bold">{currentLeaderboard.length} OPERATIVES</span>
+        <span className="text-slate-500 font-bold">{currentLeaderboard.length} PLAYERS</span>
       </div>
 
       <div className="round-leaderboard-header">
         <span className="round-header-rank">#</span>
-        <span className="round-header-name">OPERATIVE</span>
+        <span className="round-header-name">PLAYER</span>
         <span className="round-header-dist">DIST</span>
         <span className="round-header-added">ROUND</span>
         <span className="round-header-score">TOTAL</span>

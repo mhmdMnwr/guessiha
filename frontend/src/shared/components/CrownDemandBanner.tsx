@@ -48,7 +48,7 @@ export default function CrownDemandBanner({
                 Host Challenge // Crown Demanded
               </h2>
               <p className="text-xs text-neutral-300">
-                Operative <strong className="text-white font-bold">{demandNotice.claimantUsername}</strong> wants the Crown!
+                Player <strong className="text-white font-bold">{demandNotice.claimantUsername}</strong> wants the Crown!
               </p>
               <p className="text-[11px] font-mono text-amber-400/80 mt-0.5">
                 Refusing or ignoring in: <span className="font-bold text-white">{secondsLeft}s</span> (triggers squad vote)

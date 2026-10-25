@@ -31,7 +31,7 @@ export function ModeSelect({
   const handlePlayClick = () => {
     if (isCheckingUsername) return
     if (!username.trim()) {
-      setUsername("OPERATIVE-" + Math.floor(10 + Math.random() * 90))
+      setUsername("PLAYER-" + Math.floor(10 + Math.random() * 90))
     }
     onContinue()
   }
@@ -52,7 +52,7 @@ export function ModeSelect({
           <span className="entry-status-dot" />
           <span className="text-slate-400">CODENAME:</span>
           <input
-            aria-label="Operative Codename"
+            aria-label="Player Codename"
             className="bg-transparent text-sky-400 font-bold uppercase tracking-wider outline-none w-32 sm:w-40 border-b border-transparent focus:border-sky-400 transition-colors"
             maxLength={18}
             onChange={(e) => setUsername(e.target.value)}

@@ -49,7 +49,7 @@ const CURRENT_SCREEN_KEY = "wayfinder_screen"
 export function getStoredUsername(): string {
   const saved = getCookie(USERNAME_KEY) || getCookie("wayfinder_name")
   if (saved && saved.trim()) return saved.trim()
-  const generated = "OPERATIVE-" + Math.floor(10 + Math.random() * 90)
+  const generated = "PLAYER-" + Math.floor(10 + Math.random() * 90)
   setStoredUsername(generated)
   return generated
 }

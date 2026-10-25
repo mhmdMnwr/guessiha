@@ -56,7 +56,7 @@ export class ConnectionHandler {
         hostName: existingRoom.hostName,
         maxPlayers: existingRoom.maxPlayers,
         isHost: Boolean(isHost),
-        role: isHost ? 'HOST' : 'OPERATIVE',
+        role: isHost ? 'HOST' : 'PLAYER',
         players: this.gameService.getLobbyPlayers(existingRoom),
         selectedRegion: existingRoom.selectedRegion,
         difficulty: existingRoom.difficulty,
@@ -93,6 +93,31 @@ export class ConnectionHandler {
 
   handleDisconnect(socket: Socket, server: Server) {
     const clientId = getClientId(socket);
+
+    // Clean up any pending admissions for this socket/client across all rooms
+    for (const r of this.gameService.roomStore.customRooms.values()) {
+      if (r.pendingAdmissions) {
+        const targetKey = r.pendingAdmissions[clientId]
+          ? clientId
+          : Object.keys(r.pendingAdmissions).find((k) => r.pendingAdmissions[k]?.socketId === socket.id);
+        if (targetKey) {
+          const pending = r.pendingAdmissions[targetKey];
+          delete r.pendingAdmissions[targetKey];
+          const cancelPayload = {
+            roomId: r.id,
+            clientId: targetKey,
+            username: pending?.username,
+            message: `Player "${pending?.username || targetKey}" disconnected. Join request cancelled.`,
+          };
+          server.to(r.id).emit('admission_cancelled', cancelPayload);
+          if (r.hostSocketId) {
+            server.to(r.hostSocketId).emit('admission_cancelled', cancelPayload);
+          }
+          this.gameService.broadcastLobbyUpdate(server, r);
+        }
+      }
+    }
+
     const room = this.gameService.findRoomByPlayer(clientId);
     if (!room) return;
 
@@ -107,8 +132,7 @@ export class ConnectionHandler {
 
       const wasHost = Boolean(
         (room.hostId && (clientId === room.hostId || player.id === room.hostId)) ||
-        (room.hostSocketId && socket.id === room.hostSocketId) ||
-        (room.hostName && player.username === room.hostName)
+        (room.hostSocketId && socket.id === room.hostSocketId)
       );
 
       if (wasHost) {

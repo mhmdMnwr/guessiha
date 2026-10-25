@@ -84,7 +84,7 @@ export default function DesktopGameHud({
             <GameButton
               icon="back"
               onClick={() => {
-                if (window.confirm("Stop the match and return all operatives to the lobby?")) {
+                if (window.confirm("Stop the match and return all players to the lobby?")) {
                   onReturnToLobby?.()
                 }
               }}
