@@ -12,7 +12,10 @@ services:
         ipv4_address: 172.28.0.10
     ports:
       - "80:80"
+      - "443:443"
       - "3000:80"
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt-host:ro
     depends_on:
       - api-gateway
     restart: unless-stopped
