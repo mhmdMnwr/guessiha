@@ -13,6 +13,7 @@ services:
     ports:
       - "80:80"
       - "443:443"
+      - "3000:80"
     volumes:
       - /etc/letsencrypt:/etc/letsencrypt-host:ro
     depends_on:
