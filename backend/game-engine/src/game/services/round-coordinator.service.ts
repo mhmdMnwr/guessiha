@@ -69,64 +69,136 @@ export class RoundCoordinatorService {
     if (!pool || pool.length === 0 || count <= 0) return [];
 
     const locKey = (l: GeoLocation) => `${l.lat.toFixed(4)},${l.lng.toFixed(4)}`;
-
-    // Filter out recently seen locations
     const freshPool =
       recentKeys && recentKeys.size > 0
         ? pool.filter((l) => !recentKeys.has(locKey(l)))
         : pool;
     const candidatePool = freshPool.length >= count ? freshPool : pool;
 
-    // Shuffle the pool (SQL ORDER BY RANDOM() helps but JS shuffle adds extra entropy)
-    const shuffled = [...candidatePool].sort(() => Math.random() - 0.5);
+    // Group candidate pool by country
+    const byCountry = new Map<string, GeoLocation[]>();
+    const countryRegion = new Map<string, string>();
+    for (const loc of candidatePool) {
+      const country = loc.country || 'Unknown';
+      let list = byCountry.get(country);
+      if (!list) {
+        list = [];
+        byCountry.set(country, list);
+        countryRegion.set(country, (loc.region || 'europe').toLowerCase());
+      }
+      list.push(loc);
+    }
 
-    // Pick greedily: avoid same country back-to-back, prefer road locations
+    const availableRegions = Array.from(new Set(countryRegion.values()));
+    // Shuffle continents for worldwide rotation
+    const continentOrder = [...availableRegions].sort(() => Math.random() - 0.5);
+    const difficultyCycle = ['easy', 'easy', 'medium', 'medium', 'hard'];
+    const isMixedDifficulty = !options?.difficulty || options.difficulty === 'all';
+
     const selected: GeoLocation[] = [];
+    const selectedSet = new Set<GeoLocation>();
     const usedCountries = new Set<string>();
-    const usedKeys = new Set<string>();
 
-    // First pass: one per country
-    for (const loc of shuffled) {
-      if (selected.length >= count) break;
-      const key = locKey(loc);
-      if (usedKeys.has(key)) continue;
-      if (usedCountries.has(loc.country)) continue;
-      if (!isRoadLocation(loc)) continue;
-      selected.push(loc);
-      usedKeys.add(key);
-      usedCountries.add(loc.country);
-    }
+    // Non-road cap: user strictly requested non-road 360 images appear only ~1 in 1000 times (0.1% chance)
+    // 99.9% of matches will have 0 non-roads (100% pure verified road gameplay)
+    const allowNonRoad = Math.random() < 0.001;
+    const effectiveMaxNonRoads = allowNonRoad ? 1 : 0;
+    let nonRoadCount = 0;
 
-    // Second pass: fill remaining slots with any road location not yet picked
-    if (selected.length < count) {
-      for (const loc of shuffled) {
-        if (selected.length >= count) break;
-        const key = locKey(loc);
-        if (usedKeys.has(key)) continue;
-        if (!isRoadLocation(loc)) continue;
-        selected.push(loc);
-        usedKeys.add(key);
+    for (let i = 0; i < count; i++) {
+      const targetContinent = continentOrder[i % continentOrder.length];
+      const targetDiff = isMixedDifficulty
+        ? difficultyCycle[i % difficultyCycle.length]
+        : options!.difficulty!.toLowerCase();
+
+      const allUnusedCountries = Array.from(byCountry.keys()).filter(
+        (c) => !usedCountries.has(c),
+      );
+      const baseCountries =
+        allUnusedCountries.length > 0 ? allUnusedCountries : Array.from(byCountry.keys());
+      const needRoad = nonRoadCount >= effectiveMaxNonRoads;
+
+      // 1. Try matching both targetContinent & targetDiff (preferring roads if quota reached)
+      let eligibleCountries = baseCountries.filter((c) => {
+        if (availableRegions.length > 1 && countryRegion.get(c) !== targetContinent) {
+          return false;
+        }
+        const locs = byCountry.get(c)!;
+        return locs.some(
+          (l) => !selectedSet.has(l) && (!isMixedDifficulty || l.difficulty === targetDiff) && (!needRoad || isRoadLocation(l)),
+        );
+      });
+
+      // 2. Fallback: match targetContinent with any difficulty (preferring roads if quota reached)
+      if (eligibleCountries.length === 0 && availableRegions.length > 1) {
+        eligibleCountries = baseCountries.filter(
+          (c) =>
+            countryRegion.get(c) === targetContinent &&
+            byCountry.get(c)!.some((l) => !selectedSet.has(l) && (!needRoad || isRoadLocation(l))),
+        );
       }
-    }
 
-    // Third pass: fill with anything if still short
-    if (selected.length < count) {
-      for (const loc of shuffled) {
-        if (selected.length >= count) break;
-        const key = locKey(loc);
-        if (usedKeys.has(key)) continue;
-        selected.push(loc);
-        usedKeys.add(key);
+      // 3. Fallback: match any unused country with targetDiff (preferring roads if quota reached)
+      if (eligibleCountries.length === 0 && isMixedDifficulty) {
+        eligibleCountries = baseCountries.filter((c) =>
+          byCountry.get(c)!.some((l) => !selectedSet.has(l) && l.difficulty === targetDiff && (!needRoad || isRoadLocation(l))),
+        );
       }
+
+      // 4. Fallback: any country with unselected locations (preferring roads if quota reached)
+      if (eligibleCountries.length === 0) {
+        eligibleCountries = baseCountries.filter((c) =>
+          byCountry.get(c)!.some((l) => !selectedSet.has(l) && (!needRoad || isRoadLocation(l))),
+        );
+      }
+
+      // 5. Ultimate fallback if all roads exhausted: any country with unselected locations
+      if (eligibleCountries.length === 0) {
+        eligibleCountries = baseCountries.filter((c) =>
+          byCountry.get(c)!.some((l) => !selectedSet.has(l)),
+        );
+      }
+
+      if (eligibleCountries.length === 0) break;
+
+      const chosenCountry = this.pickWeightedCountry(eligibleCountries);
+      usedCountries.add(chosenCountry);
+
+      const countryLocs = byCountry.get(chosenCountry)!.filter((l) => !selectedSet.has(l));
+      const diffMatchedLocs = isMixedDifficulty
+        ? countryLocs.filter((l) => l.difficulty === targetDiff)
+        : countryLocs;
+      const finalCountryCandidates =
+        diffMatchedLocs.length > 0 ? diffMatchedLocs : countryLocs;
+
+      const roadCandidates = finalCountryCandidates.filter(isRoadLocation);
+      const nonRoadCandidates = finalCountryCandidates.filter((l) => !isRoadLocation(l));
+
+      let poolToPick: GeoLocation[];
+      if (nonRoadCount >= effectiveMaxNonRoads) {
+        poolToPick = roadCandidates.length > 0 ? roadCandidates : finalCountryCandidates;
+      } else {
+        // Still within allowance, but non-roads only appear with a 1-in-1000 chance
+        if (Math.random() < 0.001 && nonRoadCandidates.length > 0) {
+          poolToPick = nonRoadCandidates;
+        } else {
+          poolToPick = roadCandidates.length > 0 ? roadCandidates : finalCountryCandidates;
+        }
+      }
+
+      const chosenLoc = this.pickFromCountryStratified(poolToPick);
+      if (!isRoadLocation(chosenLoc)) {
+        nonRoadCount++;
+      }
+      selected.push(chosenLoc);
+      selectedSet.add(chosenLoc);
     }
 
-    // Track selected as recently seen
     if (recentKeys) {
       for (const loc of selected) {
         recentKeys.add(locKey(loc));
       }
     }
-
     return selected;
   }
 

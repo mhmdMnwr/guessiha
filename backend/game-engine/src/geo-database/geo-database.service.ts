@@ -106,19 +106,38 @@ export class GeoDatabaseService implements OnModuleInit {
   }
 
   private async initPostgresConnection() {
+    const host = process.env.POSTGRES_HOST || process.env.PGHOST;
+    const user = process.env.POSTGRES_USER || process.env.PGUSER;
+    const database = process.env.POSTGRES_DB || process.env.PGDATABASE;
+    const password = process.env.POSTGRES_PASSWORD || process.env.PGPASSWORD;
+    const port = parseInt(process.env.POSTGRES_PORT || process.env.PGPORT || '5432', 10);
     const connStr = process.env.DATABASE_URL;
-    if (!connStr) {
-      this.logger.warn('DATABASE_URL not configured. PostGIS connection disabled.');
-      return;
-    }
 
     try {
-      this.pool = new Pool({
-        connectionString: connStr,
-        connectionTimeoutMillis: 5000,
-        max: 10,
-        idleTimeoutMillis: 30000,
-      });
+      if (host && user && database) {
+        this.logger.log(`Connecting to PostGIS via discrete parameters (${user}@${host}:${port}/${database})...`);
+        this.pool = new Pool({
+          host,
+          port,
+          user,
+          password: password ? String(password) : undefined,
+          database,
+          connectionTimeoutMillis: 5000,
+          max: 10,
+          idleTimeoutMillis: 30000,
+        });
+      } else if (connStr) {
+        this.logger.log('Connecting to PostGIS via connection string...');
+        this.pool = new Pool({
+          connectionString: connStr,
+          connectionTimeoutMillis: 5000,
+          max: 10,
+          idleTimeoutMillis: 30000,
+        });
+      } else {
+        this.logger.warn('Neither PostgreSQL parameters nor DATABASE_URL configured. PostGIS connection disabled.');
+        return;
+      }
 
       const res = await this.pool.query('SELECT COUNT(*) FROM locations');
       this.logger.log(`PostGIS database active! Table contains ${res.rows[0].count} authoritative locations.`);
