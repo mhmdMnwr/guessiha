@@ -76,6 +76,7 @@ export default function App() {
       {state.screen === "pending" && (
         <PendingApprovalScreen
           onCancel={actions.handleCancelPending}
+          pendingRoomId={state.pendingRoomId}
           pendingRoomName={state.pendingRoomName}
         />
       )}

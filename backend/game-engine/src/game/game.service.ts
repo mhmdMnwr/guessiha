@@ -190,7 +190,7 @@ export class GameService {
     if (!room) return;
     const targetRoom = room;
     this.ensureActiveHost(targetRoom);
-    server.to(targetRoom.id).emit('lobby_update', {
+    const payload = {
       roomId: targetRoom.id,
       code: targetRoom.code || targetRoom.id,
       isPrivate: Boolean(targetRoom.isPrivate),
@@ -208,7 +208,11 @@ export class GameService {
         currentRound: targetRoom.currentRound,
         totalRounds: targetRoom.totalRounds,
       },
-    });
+    };
+    server.to(targetRoom.id).emit('lobby_update', payload);
+    if (targetRoom.hostSocketId) {
+      server.to(targetRoom.hostSocketId).emit('lobby_update', payload);
+    }
     server.emit('lobbies_list', this.getLobbiesList());
   }
 

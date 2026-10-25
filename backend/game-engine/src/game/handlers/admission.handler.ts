@@ -102,6 +102,7 @@ export class AdmissionHandler {
         roomId: room.id,
         clientId: targetClientId,
       });
+      this.gameService.broadcastLobbyUpdate(server, room);
       return;
     }
 

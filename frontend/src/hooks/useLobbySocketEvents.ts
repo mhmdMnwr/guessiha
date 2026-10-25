@@ -102,15 +102,16 @@ export function bindLobbySocketEvents(ctx: LobbySocketContext) {
   })
 
   socket.on("lobby_update", (data: any) => {
-    state.setRoomPlayers(data.players || [])
+    const curState = ctx.stateRef.current
+    curState.setRoomPlayers(data.players || [])
     if (Array.isArray(data.pendingAdmissions)) {
-      state.setPendingRequests(data.pendingAdmissions.map((p: any) => ({
+      curState.setPendingRequests(data.pendingAdmissions.map((p: any) => ({
         clientId: p.clientId,
         username: p.username,
         requestedAt: p.requestedAt || Date.now(),
       })))
     }
-    state.setActiveRoom((prev) =>
+    curState.setActiveRoom((prev) =>
       prev ? {
         ...prev,
         code: data.code || prev.code || prev.id,
@@ -123,11 +124,11 @@ export function bindLobbySocketEvents(ctx: LobbySocketContext) {
     )
   })
 
-  socket.on("region_updated", (d: any) => state.setActiveRoom((p) => (p ? { ...p, selectedRegion: d.selectedRegion } : null)))
-  socket.on("difficulty_updated", (d: any) => state.setActiveRoom((p) => (p ? { ...p, difficulty: d.difficulty } : null)))
+  socket.on("region_updated", (d: any) => ctx.stateRef.current.setActiveRoom((p) => (p ? { ...p, selectedRegion: d.selectedRegion } : null)))
+  socket.on("difficulty_updated", (d: any) => ctx.stateRef.current.setActiveRoom((p) => (p ? { ...p, difficulty: d.difficulty } : null)))
   socket.on("params_updated", (d: any) => {
-    if (d.totalRounds) state.setTotalRounds(d.totalRounds)
-    state.setActiveRoom((p) => (p ? { ...p, totalRounds: d.totalRounds } : null))
+    if (d.totalRounds) ctx.stateRef.current.setTotalRounds(d.totalRounds)
+    ctx.stateRef.current.setActiveRoom((p) => (p ? { ...p, totalRounds: d.totalRounds } : null))
   })
 
   socket.on("kicked_from_lobby", (data: any) => {
@@ -136,21 +137,29 @@ export function bindLobbySocketEvents(ctx: LobbySocketContext) {
   })
 
   socket.on("admission_pending", (data: any) => {
-    state.setPendingRoomName(data?.roomName || "the squad")
-    state.setPendingRoomId(data?.roomId || null)
-    state.updateScreen("pending")
+    const curState = ctx.stateRef.current
+    curState.setPendingRoomName(data?.roomName || "the squad")
+    curState.setPendingRoomId(data?.roomId || null)
+    try { if (data?.roomId) sessionStorage.setItem("guessiha_pending_room", data.roomId) } catch {}
+    curState.updateScreen("pending")
   })
 
   socket.on("admission_rejected", (data: any) => {
-    state.setPendingRoomName(null)
-    state.setPendingRoomId(null)
+    const curState = ctx.stateRef.current
+    try { sessionStorage.removeItem("guessiha_pending_room") } catch {}
+    curState.setPendingRoomName(null)
+    curState.setPendingRoomId(null)
     alert(data?.message || "Your request to join was rejected by the Squad Leader.")
-    state.updateScreen("browser", undefined, true)
+    curState.updateScreen("browser", undefined, true)
   })
 
   socket.on("admission_cancelled", (data: any) => {
-    state.setPendingRequests((prev) =>
-      prev.filter((r) => r.clientId !== data.clientId && (!data.username || r.username !== data.username))
+    ctx.stateRef.current.setPendingRequests((prev) =>
+      prev.filter((r) => {
+        if (data.clientId && r.clientId === data.clientId) return false
+        if (data.username && r.username === data.username) return false
+        return true
+      })
     )
     if (data.username) {
       ctx.addToast(`Player "${data.username}" cancelled their entry request`, "info")
@@ -158,8 +167,8 @@ export function bindLobbySocketEvents(ctx: LobbySocketContext) {
   })
 
   socket.on("admission_request", (data: any) => {
-    state.setPendingRequests((prev) =>
-      prev.some((r) => r.clientId === data.clientId)
+    ctx.stateRef.current.setPendingRequests((prev) =>
+      prev.some((r) => r.clientId === data.clientId || (data.username && r.username === data.username))
         ? prev
         : [...prev, { clientId: data.clientId, username: data.username, requestedAt: data.requestedAt || Date.now() }],
     )

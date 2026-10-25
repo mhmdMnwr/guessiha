@@ -123,6 +123,7 @@ export function useGameActions({
     handleJoinByCode: (code: string) => {
       const cleanCode = code.trim()
       state.setPendingRoomId(cleanCode)
+      try { sessionStorage.setItem("guessiha_pending_room", cleanCode) } catch {}
       socketRef.current?.emit("join_lobby", { roomId: cleanCode, username: state.username, clientPublicKey: clientPublicKeyRef.current || "" })
     },
     handleDemandCrown: () => { state.setCrownClaimPending(true); socketRef.current?.emit("demand_crown", { roomId: state.activeRoom?.id }) },
@@ -131,24 +132,27 @@ export function useGameActions({
     handleJoinRoom: (room: Room) => {
       state.setPendingRoomId(room.id)
       state.setPendingRoomName(room.name)
+      try { sessionStorage.setItem("guessiha_pending_room", room.id) } catch {}
       socketRef.current?.emit("join_lobby", { roomId: room.id, username: state.username, clientPublicKey: clientPublicKeyRef.current || "" })
     },
-    handleCancelPending: () => {
-      const roomId = state.pendingRoomId
+    handleCancelPending: (explicitRoomId?: string | null) => {
+      let roomId = explicitRoomId || state.pendingRoomId
+      if (!roomId) {
+        try { roomId = sessionStorage.getItem("guessiha_pending_room") } catch {}
+      }
       if (socketRef.current) {
         socketRef.current.emit("cancel_admission_request", {
-          roomId,
+          roomId: roomId || undefined,
           clientId: state.clientId,
           username: state.username,
         })
-        if (roomId) {
-          socketRef.current.emit("leave_lobby", {
-            roomId,
-            clientId: state.clientId,
-            username: state.username,
-          })
-        }
+        socketRef.current.emit("leave_lobby", {
+          roomId: roomId || undefined,
+          clientId: state.clientId,
+          username: state.username,
+        })
       }
+      try { sessionStorage.removeItem("guessiha_pending_room") } catch {}
       state.setPendingRoomName(null)
       state.setPendingRoomId(null)
       state.updateScreen("browser", undefined, true)
