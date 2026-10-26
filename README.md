@@ -20,7 +20,7 @@
 
 ### 🎮 PLAY LIVE IN BROWSER
 **Official Web Deployment**:
-👉 **`https://guessiha.duckdns.org`** 👈
+👉 **[Open Guessiha](https://guessiha.duckdns.org)** 👈
 
 *Free. No subscriptions, no ads, no installations required.*
 
