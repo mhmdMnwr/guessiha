@@ -20,9 +20,9 @@
 
 ### 🎮 PLAY LIVE IN BROWSER
 **Official Web Deployment**:
-👉 **`[ LIVE WEBSITE LINK - WILL BE UPDATED HERE ]`** 👈
+👉 **`https://guessiha.duckdns.org`** 👈
 
-*Free. Zero-trust. No subscriptions, no ads, no installations required.*
+*Free. No subscriptions, no ads, no installations required.*
 
 ---
 
