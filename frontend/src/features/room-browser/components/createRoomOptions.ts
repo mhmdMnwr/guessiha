@@ -1,6 +1,5 @@
 export const REGION_OPTIONS = [
   { value: "all", label: "WORLDWIDE (ALL)" },
-  { value: "algeria", label: "ALGERIA 🇩🇿" },
   { value: "europe", label: "EUROPE" },
   { value: "americas", label: "AMERICAS" },
   { value: "asia", label: "ASIA" },

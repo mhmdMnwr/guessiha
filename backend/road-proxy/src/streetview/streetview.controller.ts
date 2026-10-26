@@ -7,30 +7,6 @@ import { RedisService } from '../redis/redis.service';
 
 const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY || '';
 
-// Guaranteed verified Algerian road and highway 360° panoramas
-const GUARANTEED_ALGERIA_PANOS: Array<{ lat: number; lng: number }> = [
-  { lat: 36.768293, lng: 3.053982 }, // Algiers - Rue Didouche Mourad
-  { lat: 36.773102, lng: 3.061167 }, // Algiers - Boulevard Colonel Amirouche
-  { lat: 36.662320, lng: 3.094719 }, // Algiers - Route Nationale 1 (Baraki)
-  { lat: 36.714159, lng: 3.138192 }, // Algiers - Rocade Sud (El Harrach Interchange)
-  { lat: 36.764595, lng: 3.029768 }, // Algiers - Boulevard Bougara (El Biar)
-  { lat: 36.713435, lng: 2.836479 }, // Algiers - Corniche de Zéralda
-  { lat: 36.751310, lng: 3.016823 }, // Algiers - Val d'Hydra / Ben Aknoun
-  { lat: 35.703992, lng: -0.648909 }, // Oran - Front de Mer, Boulevard de l'ALN
-  { lat: 35.701496, lng: -0.640620 }, // Oran - Boulevard de la Soummam
-  { lat: 35.738740, lng: -0.701079 }, // Oran - Route de la Corniche (Mers El Kébir)
-  { lat: 35.719913, lng: -0.580803 }, // Oran - Boulevard Millenium (Bir El Djir)
-  { lat: 35.822192, lng: -0.489705 }, // Oran - Route de Kristel
-  { lat: 36.372052, lng: 6.611973 }, // Constantine - Boulevard de l'Abîme
-  { lat: 36.372399, lng: 6.623417 }, // Constantine - Route Nationale 3 (Gorges)
-  { lat: 36.487027, lng: 5.280168 }, // Béjaïa - Route Nationale 9 (Gorges de Kherrata)
-  { lat: 36.607405, lng: 2.407850 }, // Tipaza - Corniche du Mont Chenoua
-  { lat: 36.897244, lng: 7.770194 }, // Annaba - Avenue de l'ALN
-  { lat: 36.153165, lng: 5.679943 }, // Sétif - Boulevard Commercial
-  { lat: 35.278173, lng: 6.541061 }, // Batna - Route d'Arris
-  { lat: 35.103163, lng: -1.857636 }, // Tlemcen - Corniche de Ghazaouet
-];
-
 @Controller('api/streetview')
 export class StreetViewController {
   private readonly logger = new Logger(StreetViewController.name);
@@ -86,7 +62,6 @@ export class StreetViewController {
   }
 
   private async resolveStreetViewCoords(lat: number, lng: number): Promise<{ lat: number; lng: number }> {
-    const isAlgeria = lat >= 18.0 && lat <= 38.0 && lng >= -9.0 && lng <= 12.5;
     const cacheKey = `sv:snap:${lat.toFixed(5)}:${lng.toFixed(5)}`;
 
     const cached = await this.redis.getCached(cacheKey);
@@ -96,20 +71,12 @@ export class StreetViewController {
       } catch {}
     }
 
-    // Check with Google's Street View metadata
-    const meta = await this.fetchMetadata(lat, lng, isAlgeria ? 35000 : 2500);
+    // Check with Google's Street View metadata (strict outdoor road panorama)
+    const meta = await this.fetchMetadata(lat, lng, 2500);
     if (meta && meta.lat && meta.lng) {
       const result = { lat: meta.lat, lng: meta.lng };
       await this.redis.setCached(cacheKey, JSON.stringify(result), 86400);
       return result;
-    }
-
-    // If in Algeria and no panorama was found nearby, fall back to a guaranteed verified panorama
-    if (isAlgeria) {
-      const fallback = this.findClosestOrRotatingPano(lat, lng);
-      this.logger.warn(`No nearby panorama at ${lat}, ${lng}. Snapped to guaranteed Algerian panorama at ${fallback.lat}, ${fallback.lng}`);
-      await this.redis.setCached(cacheKey, JSON.stringify(fallback), 86400);
-      return fallback;
     }
 
     return { lat, lng };
@@ -144,19 +111,5 @@ export class StreetViewController {
         resolve(null);
       });
     });
-  }
-
-  private findClosestOrRotatingPano(lat: number, lng: number): { lat: number; lng: number } {
-    let closest = GUARANTEED_ALGERIA_PANOS[0];
-    let minDist = Infinity;
-
-    for (const p of GUARANTEED_ALGERIA_PANOS) {
-      const d = Math.hypot(p.lat - lat, p.lng - lng);
-      if (d < minDist) {
-        minDist = d;
-        closest = p;
-      }
-    }
-    return closest;
   }
 }

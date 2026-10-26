@@ -16,8 +16,9 @@ const REGION_ALIASES: Record<string, string> = {
   south_america: 'americas',
   latin_america: 'americas',
   america: 'americas',
-  algerie: 'algeria',
-  dz: 'algeria',
+  algeria: 'all',
+  algerie: 'all',
+  dz: 'all',
 };
 
 export const COUNTRY_TIER_WEIGHTS: Record<string, number> = {
@@ -33,7 +34,6 @@ export const COUNTRY_TIER_WEIGHTS: Record<string, number> = {
   Australia: 3.0,
   Canada: 3.0,
   Mexico: 3.0,
-  Algeria: 0.05,
   Argentina: 2.5,
   India: 2.5,
   Indonesia: 2.5,
@@ -80,7 +80,7 @@ export function isRoadLocation(loc: { label?: string } | null | undefined): bool
 
 // Emergency fallback in case database connection fails completely during boot (all authentic roads)
 const EMERGENCY_FALLBACK_LOCATIONS: GeoLocation[] = [
-  { id: '1', lat: 36.768293, lng: 3.053982, label: 'Rue Didouche Mourad, Algiers, Algeria', country: 'Algeria', region: 'algeria', difficulty: 'easy' },
+  { id: '1', lat: 51.5007, lng: -0.1246, label: 'Westminster Bridge Road, London, United Kingdom', country: 'United Kingdom', region: 'europe', difficulty: 'easy' },
   { id: '2', lat: 48.8700, lng: 2.3075, label: 'Avenue des Champs-Élysées, Paris, France', country: 'France', region: 'europe', difficulty: 'easy' },
   { id: '3', lat: 35.6762, lng: 139.6503, label: 'Shinjuku Meiji-dori, Tokyo, Japan', country: 'Japan', region: 'asia', difficulty: 'easy' },
   { id: '4', lat: 40.7128, lng: -74.006, label: 'Broadway & 42nd Street, New York, USA', country: 'United States', region: 'americas', difficulty: 'easy' },
@@ -197,21 +197,12 @@ export class GeoDatabaseService implements OnModuleInit {
     let idx = 1;
 
     if (region && region !== 'all') {
-      if (region === 'algeria') {
-        conditions.push(`(LOWER(country) = 'algeria' OR LOWER(region) = 'algeria')`);
-      } else if (region === 'africa') {
-        conditions.push(`(LOWER(region) = 'africa' OR LOWER(country) = 'algeria')`);
-      } else {
-        conditions.push(`LOWER(region) = $${idx++}`);
-        params.push(region);
-      }
-    } else {
-      // In Worldwide mode, exclude Algeria from the main query pool by default so its 1,000 places don't flood the match.
-      // Give it a low appearing rate (only ~2% chance of including Algeria candidate).
-      if (Math.random() > 0.02) {
-        conditions.push(`(LOWER(country) != 'algeria' AND LOWER(region) != 'algeria')`);
-      }
+      conditions.push(`LOWER(region) = $${idx++}`);
+      params.push(region);
     }
+
+    // Strictly exclude Algeria across all modes
+    conditions.push(`(LOWER(country) != 'algeria' AND LOWER(region) != 'algeria')`);
 
     if (difficulty && difficulty !== 'all') {
       conditions.push(`LOWER(difficulty) = $${idx++}`);

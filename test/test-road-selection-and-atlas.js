@@ -53,19 +53,16 @@ function isRoad(loc) {
 
 assert(isRoad({ label: 'Road in Greater Poland Voivodeship, Poland' }), 'Road in ... is road');
 assert(isRoad({ label: 'Avenue des Champs-Élysées, Paris, France' }), 'Champs-Élysées is road');
-assert(isRoad({ label: 'Route Nationale 1, Sortie Sud Baraki, Wilaya de Algiers, Algeria' }), 'RN1 is road');
-assert(isRoad({ label: 'Rue Didouche Mourad, Wilaya de Algiers, Algeria' }), 'Rue Didouche Mourad is road');
-assert(!isRoad({ label: 'Ruines Romaines Tipaza, Wilaya de Tipaza, Algeria' }), 'Ruines Romaines is not road');
-assert(!isRoad({ label: 'Maqam Echahid, Monument des Martyrs, Wilaya de Algiers, Algeria' }), 'Maqam Echahid is not road');
+assert(isRoad({ label: 'Broadway & 42nd Street, New York, USA' }), 'Broadway is road');
+assert(isRoad({ label: 'George Street, Sydney, Australia' }), 'George Street is road');
+assert(!isRoad({ label: 'Eiffel Tower Observation Deck, Paris, France' }), 'Eiffel Tower is not road');
+assert(!isRoad({ label: 'Colosseum Interior, Rome, Italy' }), 'Colosseum Interior is not road');
 assert(!isRoad({ label: 'Piccadilly Circus, London, UK' }), 'Piccadilly Circus is not road');
 console.log('✅ isRoad correctly differentiates road coverage from monuments/ruins.');
 
-// 5. Verify road-proxy fallback
+// 5. Verify road-proxy outdoor metadata filter
 const streetviewCtrlTs = fs.readFileSync(path.join(__dirname, '../backend/road-proxy/src/streetview/streetview.controller.ts'), 'utf8');
 assert(streetviewCtrlTs.includes('source=outdoor'), 'streetview.controller must specify source=outdoor in metadata queries');
-assert(streetviewCtrlTs.includes('Rue Didouche Mourad'), 'streetview.controller must use real roads in GUARANTEED_ALGERIA_PANOS');
-assert(streetviewCtrlTs.includes('Route Nationale 1'), 'streetview.controller must use RN1 in GUARANTEED_ALGERIA_PANOS');
-assert(!streetviewCtrlTs.includes('Ruines Romaines Tipaza'), 'streetview.controller must not use Roman ruins as guaranteed road panos');
-console.log('✅ road-proxy Algeria fallbacks updated to authentic road panoramas with outdoor metadata filter.');
+console.log('✅ road-proxy outdoor metadata filter verified.');
 
 console.log('\n🎉 ALL ROAD SELECTION & ATLAS NAVIGATION TESTS PASSED SUCCESSFULLY!');

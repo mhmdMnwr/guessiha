@@ -1,6 +1,5 @@
 export const REGION_POOL = [
   { id: "all", label: "WORLDWIDE" },
-  { id: "algeria", label: "ALGERIA 🇩🇿" },
   { id: "europe", label: "EUROPE" },
   { id: "americas", label: "AMERICAS" },
   { id: "asia", label: "ASIA" },
