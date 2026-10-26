@@ -115,8 +115,8 @@ Deploy Guessiha on any Linux server, VPS (AWS EC2, Lightsail, Hetzner, Oracle), 
 
 ### 1. Clone & Configure
 ```bash
-git clone https://github.com/mhmdMnwr/free_local_geoguesser.git
-cd free_local_geoguesser
+git clone https://github.com/mhmdMnwr/guessiha.git
+cd guessiha
 cp .env.example .env
 ```
 
