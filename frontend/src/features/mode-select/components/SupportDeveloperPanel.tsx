@@ -25,7 +25,7 @@ export function SupportDeveloperPanel({
         {/* 1. GITHUB */}
         <a
           className="support-action-card"
-          href="https://github.com/mhmdMnwr"
+          href="https://github.com/mhmdMnwr/guessiha"
           rel="noreferrer"
           target="_blank"
         >
@@ -34,7 +34,7 @@ export function SupportDeveloperPanel({
           </span>
           <div className="flex-1 min-w-0">
             <strong className="block text-sm font-bold tracking-wider uppercase text-white">
-              GITHUB // @mhmdMnwr
+              GITHUB // GUESSIHA REPO
             </strong>
             <span className="text-xs text-slate-400 block truncate">
               Star the repository &amp; explore source code
