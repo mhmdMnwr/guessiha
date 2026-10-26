@@ -20,7 +20,6 @@ interface ExploreViewProps {
 }
 
 export function ExploreView({
-  room,
   currentRound,
   totalRounds,
   totalScore,
@@ -34,16 +33,6 @@ export function ExploreView({
 }: ExploreViewProps) {
   return (
     <>
-      <div className="location-prompt hidden md:flex">
-        <span className="section-index">
-          ROUND {String(currentRound).padStart(2, "0")} · {(room.selectedRegion || "WORLD").toUpperCase()}
-        </span>
-        <strong>READ THE LANDSCAPE</strong>
-        <small>
-          Look for architecture, vegetation, sun angle, road markings, and driving side.
-        </small>
-      </div>
-
       <div className="hidden md:block">
         <LiveStandingsWidget
           currentRound={currentRound}

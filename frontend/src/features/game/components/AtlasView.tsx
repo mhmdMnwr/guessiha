@@ -92,7 +92,7 @@ export function AtlasView({
         )}
         {hasGuessed ? (
           <div className="atlas-locked-pill flex-1 text-center">
-            <span>✓ GUESS LOCKED // WAITING FOR SQUAD</span>
+            <span>✓ GUESS LOCKED // WAITING FOR PLAYERS</span>
           </div>
         ) : (
           <GameButton

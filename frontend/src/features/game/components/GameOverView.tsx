@@ -37,7 +37,7 @@ export function GameOverView({
       <div className="mt-8 flex justify-center gap-4">
         {isHost ? (
           <GameButton icon="back" onClick={onReturnToLobby || onExit} variant="primary">
-            RETURN TO SQUAD LOBBY
+            RETURN TO LOBBY
           </GameButton>
         ) : (
           <GameButton icon="back" onClick={onExit} variant="outline">

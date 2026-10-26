@@ -44,7 +44,7 @@ export function MatchConfigPanel({
             MATCH CONFIG
           </div>
           <span className="panel-caption">
-            {isHost ? "CONFIGURED BY YOU (SQUAD LEADER)" : "CONFIGURED BY LEADER 👑"}
+            {isHost ? "CONFIGURED BY YOU (HOST)" : "CONFIGURED BY HOST 👑"}
           </span>
         </div>
         <Icon name="shield" />

@@ -16,7 +16,7 @@ export function bindCrownSocketEvents(ctx: LobbySocketContext) {
 
   socket.on("crown_demand_sent", (data: any) => {
     state.setCrownClaimPending(true)
-    ctx.addToast(data.message || "Crown challenge issued. Waiting for Squad Leader...", "info")
+    ctx.addToast(data.message || "Crown challenge issued. Waiting for Host...", "info")
   })
 
   socket.on("crown_vote_started", (data: any) => {
@@ -32,7 +32,7 @@ export function bindCrownSocketEvents(ctx: LobbySocketContext) {
       totalEligible: data.totalEligible || 0,
     })
     state.setHasVotedCrown(false)
-    ctx.addToast(`🗳️ Squad Referendum: Vote on "${data.claimantUsername}"!`, "warning")
+    ctx.addToast(`🗳️ Room Referendum: Vote on "${data.claimantUsername}"!`, "warning")
   })
 
   socket.on("crown_vote_update", (data: any) => {
@@ -63,9 +63,9 @@ export function bindCrownSocketEvents(ctx: LobbySocketContext) {
     state.setHasVotedCrown(false)
     state.setCrownClaimPending(false)
     if (isMe) {
-      ctx.addToast("👑 You are now the Squad Leader!", "success")
+      ctx.addToast("👑 You are now the Host!", "success")
     } else {
-      ctx.addToast(`👑 Player "${data.newHost}" is now the Squad Leader.`, "info")
+      ctx.addToast(`👑 Player "${data.newHost}" is now the Host.`, "info")
     }
   })
 }

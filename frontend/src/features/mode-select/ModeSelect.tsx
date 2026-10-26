@@ -72,7 +72,7 @@ export function ModeSelect({
             guessiha
           </h1>
           <p className="entry-subtitle">
-            Drop into unknown roads worldwide. Read the terrain, lock your coordinates, and outscore your squad in real time.
+            Drop into unknown roads worldwide. Read the terrain, lock your coordinates, and outscore your opponents in real time.
           </p>
 
           <div className="username-input-bar">
@@ -121,7 +121,7 @@ export function ModeSelect({
               </span>
               <span className="menu-blade-text">
                 <strong>{isCheckingUsername ? "VERIFYING..." : "PLAY"}</strong>
-                <small>ENTER SQUAD BROWSER &amp; DEPLOY INTO A MATCH</small>
+                <small>ENTER ROOM BROWSER &amp; DEPLOY INTO A MATCH</small>
               </span>
               <Icon name="arrow" size={20} />
             </button>

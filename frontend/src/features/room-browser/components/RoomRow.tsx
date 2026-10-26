@@ -90,7 +90,7 @@ export function RoomRow({ room, index, onJoin }: RoomRowProps) {
           }}
           variant="outline"
         >
-          {room.status === "LOBBY" ? "JOIN SQUAD" : "JOIN MATCH"}
+          {room.status === "LOBBY" ? "JOIN ROOM" : "JOIN MATCH"}
         </GameButton>
       )}
     </div>

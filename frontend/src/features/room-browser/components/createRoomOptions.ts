@@ -28,9 +28,9 @@ export const DURATION_OPTIONS = [
 ]
 
 export const CAPACITY_OPTIONS = [
-  { value: 2, label: "2 PLAYERS (DUEL)" },
-  { value: 4, label: "4 PLAYERS (FIRETEAM)" },
-  { value: 8, label: "8 PLAYERS (SQUAD)" },
-  { value: 12, label: "12 PLAYERS (PLATOON)" },
-  { value: 16, label: "16 PLAYERS (MAX)" },
+  { value: 2, label: "2 PLAYERS" },
+  { value: 4, label: "4 PLAYERS" },
+  { value: 8, label: "8 PLAYERS" },
+  { value: 12, label: "12 PLAYERS" },
+  { value: 16, label: "16 PLAYERS" },
 ]

@@ -26,7 +26,7 @@ export function LeaderboardScreen({
       )}
       <div className="leaderboard-heading">
         <span className="section-index">LIVE EXPEDITION STANDINGS</span>
-        <div className="atlas-title">SQUAD RANKINGS</div>
+        <div className="atlas-title">ROOM RANKINGS</div>
         <p>Positions update in real time as scores are locked.</p>
       </div>
 

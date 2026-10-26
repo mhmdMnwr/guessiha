@@ -29,7 +29,7 @@ export function SquadPanel({
         <div>
           <div className="panel-label">
             <Icon name="players" />
-            SQUAD PLAYERS
+            ROOM PLAYERS
           </div>
           <span className="panel-caption">
             {players.length} / {effectiveMax} PLAYERS READY
@@ -67,7 +67,7 @@ export function SquadPanel({
                     </i>
                   )}
                 </strong>
-                <small>{player.isHost ? "SQUAD LEADER // READY" : "PLAYER // READY"}</small>
+                <small>{player.isHost ? "HOST // READY" : "PLAYER // READY"}</small>
               </span>
               <span className="player-state player-state--ready flex items-center gap-2">
                 <Icon name="check" size={16} />
@@ -78,7 +78,7 @@ export function SquadPanel({
                     className="kick-btn ml-1 px-2 py-0.5 text-xs font-mono font-bold text-rose-400 hover:text-white bg-rose-950/70 hover:bg-rose-700 border border-rose-700 rounded transition-all cursor-pointer"
                     onClick={(e) => {
                       e.stopPropagation()
-                      if (window.confirm(`Kick player "${player.username}" from the squad?`)) {
+                      if (window.confirm(`Kick player "${player.username}" from the room?`)) {
                         onKickPlayer(player.id || "")
                       }
                     }}

@@ -46,7 +46,7 @@ export default function App() {
             username={state.username}
           />
           <CreateRoomModal
-            defaultName={`${state.username}'S SQUAD`}
+            defaultName={`${state.username}'S ROOM`}
             error={state.createRoomError}
             isCreating={state.isCreatingRoom}
             isOpen={state.showCreateModal}

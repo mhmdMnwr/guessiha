@@ -108,7 +108,7 @@ export function RoundResultsView({
             <div className="w-full py-3 px-4 bg-slate-900/95 border border-slate-700/80 rounded-xl flex items-center justify-center gap-2.5">
               <span className="inline-block w-2.5 h-2.5 bg-amber-400 rounded-full animate-ping" />
               <span className="text-xs font-mono text-amber-300 font-bold uppercase tracking-wider">
-                WAITING FOR SQUAD LEADER 👑 TO ADVANCE
+                WAITING FOR HOST 👑 TO ADVANCE
               </span>
             </div>
           )}

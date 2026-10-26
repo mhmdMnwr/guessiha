@@ -48,7 +48,7 @@ export function useGameActions({
   }
 
   function handleCreateRoomSubmit(values: CreateRoomFormValues) {
-    const name = values.name.trim() || `${state.username}'S SQUAD`
+    const name = values.name.trim() || `${state.username}'S ROOM`
     state.setIsCreatingRoom(true)
     state.setCreateRoomError(null)
 

@@ -23,7 +23,7 @@ export default function BrowserHeader({
         <span className="hidden sm:inline">MENU</span>
       </button>
 
-      <span className="mobile-nav-title">ACTIVE SQUADS</span>
+      <span className="mobile-nav-title">ACTIVE ROOMS</span>
 
       <label className="mobile-codename-chip" title="Click to edit your codename">
         <span className="mobile-dot" />

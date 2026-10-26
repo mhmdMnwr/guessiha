@@ -35,7 +35,7 @@ export default function MobileGameHud({
 
   const handleExit = () => {
     if (isHost) {
-      if (window.confirm("Stop the match and return all players to the squad lobby?")) {
+      if (window.confirm("Stop the match and return all players to the room lobby?")) {
         onReturnToLobby?.()
       }
     } else {
@@ -52,7 +52,7 @@ export default function MobileGameHud({
           aria-label={isHost ? "Return to Lobby" : "Exit Match"}
           className="hud-icon-btn"
           onClick={handleExit}
-          title={isHost ? "Return Squad to Lobby" : "Exit Match"}
+          title={isHost ? "Return Room to Lobby" : "Exit Match"}
           type="button"
         >
           <Icon name="back" size={18} />
@@ -77,7 +77,7 @@ export default function MobileGameHud({
             className="hud-crown-btn"
             disabled={crownClaimPending}
             onClick={onDemandCrown}
-            title="Demand Squad Leadership"
+            title="Demand Host Leadership"
             type="button"
           >
             👑

@@ -68,13 +68,13 @@ export function RoomBrowser({
       <div className="browser-content">
         <section className="browser-heading">
           <div>
-            <div className="lobby-title browser-title" data-text="ACTIVE SQUADS">AVAILABLE SQUADS</div>
+            <div className="lobby-title browser-title" data-text="ACTIVE ROOMS">AVAILABLE ROOMS</div>
             <div className="lobby-subtitle">
-              {lobbies.length} squads available. Search or enter a 6-digit room code below to jump in.
+              {lobbies.length} rooms available. Search or enter a 6-digit room code below to jump in.
             </div>
           </div>
           <div className="hidden sm:block">
-            <GameButton icon="plus" onClick={onCreate}>CREATE SQUAD</GameButton>
+            <GameButton icon="plus" onClick={onCreate}>CREATE ROOM</GameButton>
           </div>
         </section>
 
@@ -92,7 +92,7 @@ export function RoomBrowser({
 
         <section className="room-browser panel">
           <div className="room-table-head">
-            <span>SQUAD / HOST</span>
+            <span>ROOM / HOST</span>
             <span>STATE</span>
             <span>PLAYERS</span>
             <span>REGION / DIFF</span>
@@ -104,8 +104,8 @@ export function RoomBrowser({
                 {trimmedQuery
                   ? isSixDigitCode
                     ? `NO ACTIVE ROOM FOUND WITH 6-DIGIT CODE "${trimmedQuery}". CHECK THE CODE OR CLICK "JOIN ROOM #${trimmedQuery}".`
-                    : `NO SQUADS MATCHING "${trimmedQuery}". ENTER A 6-DIGIT CODE TO UNLOCK A PRIVATE SQUAD.`
-                  : "NO ACTIVE PUBLIC SQUADS FOUND. ENTER A 6-DIGIT CODE ABOVE OR TAP \"CREATE SQUAD\" TO HOST!"}
+                    : `NO ROOMS MATCHING "${trimmedQuery}". ENTER A 6-DIGIT CODE TO UNLOCK A PRIVATE ROOM.`
+                  : "NO ACTIVE PUBLIC ROOMS FOUND. ENTER A 6-DIGIT CODE ABOVE OR TAP \"CREATE ROOM\" TO HOST!"}
               </div>
             ) : (
               displayedRooms.map((room, index) => (
@@ -119,7 +119,7 @@ export function RoomBrowser({
       <div className="mobile-floating-action sm:hidden">
         <button className="mobile-fab-btn" onClick={onCreate} type="button">
           <Icon name="plus" size={18} />
-          <span>CREATE SQUAD</span>
+          <span>CREATE ROOM</span>
         </button>
       </div>
     </main>

@@ -63,12 +63,12 @@ export function CreateRoomModal({
     <div className="modal-backdrop" onClick={(e) => e.target === e.currentTarget && onClose()}>
       <div className="modal-dialog">
         <div className="modal-header">
-          <div className="modal-title"><Icon name="crown" size={22} /> CREATE SQUAD EXPEDITION</div>
+          <div className="modal-title"><Icon name="crown" size={22} /> CREATE ROOM</div>
           <button className="text-slate-400 hover:text-white font-mono text-lg cursor-pointer bg-transparent border-0" onClick={onClose} type="button">✕</button>
         </div>
 
         <div className="modal-field">
-          <label className="modal-label">SQUAD CODENAME / ROOM NAME</label>
+          <label className="modal-label">ROOM NAME</label>
           <input
             className="modal-input uppercase"
             maxLength={24}
@@ -112,7 +112,7 @@ export function CreateRoomModal({
 
         <div className="grid grid-cols-2 gap-4">
           <div className="modal-field">
-            <label className="modal-label">MAX SQUAD CAPACITY</label>
+            <label className="modal-label">MAX PLAYERS</label>
             <select className="modal-select" onChange={(e) => setMaxPlayers(Number(e.target.value))} value={maxPlayers}>
               {CAPACITY_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
             </select>
@@ -135,7 +135,7 @@ export function CreateRoomModal({
         <div className="modal-actions">
           <GameButton disabled={isCreating} onClick={onClose} variant="ghost">CANCEL</GameButton>
           <GameButton disabled={isCreating} icon="crown" onClick={handleSubmit} variant="primary">
-            {isCreating ? "CREATING EXPEDITION..." : "CREATE & TAKE CROWN 👑"}
+            {isCreating ? "CREATING ROOM..." : "CREATE ROOM 👑"}
           </GameButton>
         </div>
       </div>

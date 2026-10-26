@@ -53,7 +53,7 @@ export default function CrownVoteBanner({
             <span className="text-3xl">🗳️</span>
             <div>
               <h2 className="text-sm font-mono font-bold uppercase tracking-wider text-cyan-300">
-                Squad Referendum // Elect New Leader
+                Room Referendum // Elect New Leader
               </h2>
               <p className="text-xs text-neutral-300">
                 Should player <strong className="text-white font-bold">{voteNotice.claimantUsername}</strong> take the Crown?

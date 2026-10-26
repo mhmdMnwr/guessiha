@@ -33,7 +33,7 @@ export default function CrownResultBanner({
                   isSuccess ? "text-amber-300" : "text-neutral-400"
                 }`}
               >
-                {isSuccess ? "New Squad Leader Crowned" : "Squad Vote Concluded"}
+                {isSuccess ? "New Host Crowned" : "Room Vote Concluded"}
               </h2>
               <p className="text-xs text-white mt-0.5">{electionResult.message}</p>
             </div>

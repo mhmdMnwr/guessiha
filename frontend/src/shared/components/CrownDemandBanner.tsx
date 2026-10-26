@@ -51,7 +51,7 @@ export default function CrownDemandBanner({
                 Player <strong className="text-white font-bold">{demandNotice.claimantUsername}</strong> wants the Crown!
               </p>
               <p className="text-[11px] font-mono text-amber-400/80 mt-0.5">
-                Refusing or ignoring in: <span className="font-bold text-white">{secondsLeft}s</span> (triggers squad vote)
+                Refusing or ignoring in: <span className="font-bold text-white">{secondsLeft}s</span> (triggers room vote)
               </p>
             </div>
           </div>

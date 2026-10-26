@@ -23,7 +23,7 @@ export function RoomSearchBar({
           <Icon name="radar" size={20} />
         </span>
         <input
-          aria-label="Search squads or enter 6-digit private room code"
+          aria-label="Search rooms or enter 6-digit private room code"
           className="w-full bg-transparent text-slate-100 placeholder-slate-500 font-mono text-sm tracking-wider outline-none"
           maxLength={32}
           onChange={(e) => onSearchChange(e.target.value)}
@@ -32,7 +32,7 @@ export function RoomSearchBar({
               onQuickJoin()
             }
           }}
-          placeholder="SEARCH SQUAD NAME OR ENTER 6-DIGIT PRIVATE ROOM CODE (E.G. 482910)..."
+          placeholder="SEARCH ROOM NAME OR ENTER 6-DIGIT PRIVATE ROOM CODE (E.G. 482910)..."
           type="text"
           value={searchQuery}
         />

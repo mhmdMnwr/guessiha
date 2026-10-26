@@ -1,40 +1,7 @@
 /* ==========================================================================
-   DESKTOP GAME OVERLAYS (Location Prompt & Corner Guess Console)
+   DESKTOP GAME OVERLAYS (Corner Guess Console)
    ========================================================================== */
 
-.location-prompt {
-  display: none !important;
-}
-
-@media (min-width: 768px) {
-  .location-prompt {
-    position: absolute;
-    top: 132px;
-    left: 28px;
-    padding: 16px 20px;
-    display: flex !important;
-    flex-direction: column;
-    border-radius: 8px;
-    border: 1px solid var(--line);
-    background: rgba(14, 20, 23, 0.86);
-    backdrop-filter: blur(14px);
-    animation: slide-from-left 600ms 220ms both;
-    z-index: 20;
-  }
-}
-
-.location-prompt::before {
-  position: absolute;
-  top: 12px;
-  bottom: 12px;
-  left: 0;
-  width: 3px;
-  content: "";
-  background: var(--acid);
-}
-
-.location-prompt strong { margin-top: 5px; font-family: var(--heading); font-size: 25px; letter-spacing: 0.8px; color: #ffffff; }
-.location-prompt small { margin-top: 4px; color: var(--muted); font-size: 12px; }
 .game-screen .section-index { color: var(--acid); }
 
 .guess-console {

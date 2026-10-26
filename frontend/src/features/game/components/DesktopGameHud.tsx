@@ -74,7 +74,7 @@ export default function DesktopGameHud({
               className="px-2.5 py-1 text-[11px] font-mono font-bold uppercase tracking-wider text-amber-300 bg-amber-950/70 hover:bg-amber-900 border border-amber-600/70 rounded transition-all cursor-pointer disabled:opacity-50"
               disabled={crownClaimPending}
               onClick={onDemandCrown}
-              title="Demand Squad Leadership"
+              title="Demand Host Leadership"
               type="button"
             >
               👑 {crownClaimPending ? "CHALLENGING..." : "DEMAND CROWN"}

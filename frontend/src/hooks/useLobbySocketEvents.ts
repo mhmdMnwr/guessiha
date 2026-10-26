@@ -132,13 +132,13 @@ export function bindLobbySocketEvents(ctx: LobbySocketContext) {
   })
 
   socket.on("kicked_from_lobby", (data: any) => {
-    alert(data?.message || "You have been kicked from the squad by the leader.")
+    alert(data?.message || "You have been kicked from the room by the host.")
     clearSessionToBrowser()
   })
 
   socket.on("admission_pending", (data: any) => {
     const curState = ctx.stateRef.current
-    curState.setPendingRoomName(data?.roomName || "the squad")
+    curState.setPendingRoomName(data?.roomName || "the room")
     curState.setPendingRoomId(data?.roomId || null)
     try { if (data?.roomId) sessionStorage.setItem("guessiha_pending_room", data.roomId) } catch {}
     curState.updateScreen("pending")
@@ -149,7 +149,7 @@ export function bindLobbySocketEvents(ctx: LobbySocketContext) {
     try { sessionStorage.removeItem("guessiha_pending_room") } catch {}
     curState.setPendingRoomName(null)
     curState.setPendingRoomId(null)
-    alert(data?.message || "Your request to join was rejected by the Squad Leader.")
+    alert(data?.message || "Your request to join was rejected by the Host.")
     curState.updateScreen("browser", undefined, true)
   })
 
@@ -172,12 +172,12 @@ export function bindLobbySocketEvents(ctx: LobbySocketContext) {
         ? prev
         : [...prev, { clientId: data.clientId, username: data.username, requestedAt: data.requestedAt || Date.now() }],
     )
-    ctx.addToast(`Player "${data.username}" requested entry to squad`, "warning")
+    ctx.addToast(`Player "${data.username}" requested entry to room`, "warning")
   })
 
-  socket.on("player_entered_lobby", (d: any) => ctx.addToast(`Player "${d.username}" entered the squad!`, "success"))
+  socket.on("player_entered_lobby", (d: any) => ctx.addToast(`Player "${d.username}" entered the room!`, "success"))
   socket.on("player_joined", (d: any) => ctx.addToast(`Player "${d.username}" joined the match!`, "info"))
-  socket.on("player_left", (d: any) => ctx.addToast(`Player "${d.username || "A player"}" left the squad.`, "info"))
+  socket.on("player_left", (d: any) => ctx.addToast(`Player "${d.username || "A player"}" left the room.`, "info"))
   socket.on("lobby_terminated", (data: any) => {
     const cur = ctx.stateRef.current
     // If we are in the middle of creating a NEW room (isCreatingRoom) or already successfully

@@ -59,7 +59,7 @@ export function Lobby({
       <div className="ambient-grid" />
       <header className="mobile-native-nav">
         <button
-          aria-label="Leave Squad"
+          aria-label="Leave Room"
           className="mobile-back-btn"
           onClick={onBack}
           type="button"
@@ -108,16 +108,16 @@ export function Lobby({
           <div className="launch-status">
             <span className="launch-symbol"><Icon name={isHost ? "crown" : "radar"} size={22} /></span>
             <span>
-              <strong>{isHost ? "SQUAD READY" : "AWAITING SQUAD LEADER"}</strong>
-              <small>{isHost ? "You have the Crown 👑. Commence when ready." : "Standing by for squad leader to commence expedition."}</small>
+              <strong>{isHost ? "ROOM READY" : "AWAITING HOST"}</strong>
+              <small>{isHost ? "You have the Crown 👑. Commence when ready." : "Standing by for host to commence match."}</small>
             </span>
           </div>
           {isHost ? (
-            <GameButton className="ready-button" icon="arrow" onClick={onStart} variant="primary">START EXPEDITION</GameButton>
+            <GameButton className="ready-button" icon="arrow" onClick={onStart} variant="primary">START MATCH</GameButton>
           ) : (
             <div className="text-xs font-mono text-amber-300 uppercase tracking-widest px-4 py-2.5 bg-slate-900/90 border border-amber-600/50 rounded-lg flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
-              <span>WAITING FOR LEADER 👑</span>
+              <span>WAITING FOR HOST 👑</span>
             </div>
           )}
         </section>
