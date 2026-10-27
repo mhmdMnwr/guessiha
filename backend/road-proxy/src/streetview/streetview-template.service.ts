@@ -37,74 +37,98 @@ export class StreetviewTemplateService {
       touch-action: pan-x pan-y pinch-zoom;
     }
     
-    /* Sleek, Non-Obstructive Anti-Spoiler Badge (covers only Google title text without blocking road clicks) */
+    /* Anti-Spoiler Top-Left Shield: 100% blocks Google place name, address, and 'View on Google Maps' / 'View larger map' link */
     .sv-shield-top-left {
       position: absolute;
       top: 0;
       left: 0;
-      width: 220px;
-      max-width: 60vw;
-      height: 36px;
-      background: #090e10;
-      border-bottom-right-radius: 8px;
-      border-bottom: 1px solid #1e293b;
-      border-right: 1px solid #1e293b;
+      width: 400px;
+      max-width: 88vw;
+      height: 95px;
+      background: #070b0d;
+      border-bottom-right-radius: 12px;
+      border-bottom: 2px solid #1e293b;
+      border-right: 2px solid #1e293b;
       z-index: 999999;
       pointer-events: auto;
       display: flex;
-      align-items: center;
-      padding: 0 12px;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.7);
+      flex-direction: column;
+      justify-content: center;
+      padding: 0 20px;
+      gap: 6px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.85);
     }
     .sv-shield-brand { display: flex; align-items: center; gap: 8px; }
     .sv-shield-title {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace, sans-serif;
-      font-size: 11px;
+      font-size: 13px;
       font-weight: 800;
-      letter-spacing: 1.2px;
+      letter-spacing: 1.5px;
       color: #38bdf8;
       text-transform: uppercase;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
     }
     .sv-shield-dot {
-      width: 6px;
-      height: 6px;
+      width: 8px;
+      height: 8px;
       background: #10b981;
       border-radius: 50%;
-      box-shadow: 0 0 8px #10b981;
+      box-shadow: 0 0 10px #10b981;
       animation: sv-pulse 1.8s infinite alternate;
     }
     @keyframes sv-pulse { from { opacity: 0.4; } to { opacity: 1; } }
+    .sv-shield-sub {
+      font-family: monospace;
+      font-size: 11px;
+      color: #94a3b8;
+      letter-spacing: 0.6px;
+    }
+
+    /* Anti-Spoiler Top-Right Shield: Blocks Google expand/fullscreen button */
+    .sv-shield-top-right {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 68px;
+      height: 68px;
+      background: #070b0d;
+      border-bottom-left-radius: 12px;
+      border-bottom: 2px solid #1e293b;
+      border-left: 2px solid #1e293b;
+      z-index: 999999;
+      pointer-events: auto;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.85);
+    }
 
     /* Compact Bottom Shields */
     .sv-shield-bottom-left {
       position: absolute;
       bottom: 0;
       left: 0;
-      width: 85px;
-      height: 26px;
-      background: #090e10;
-      border-top-right-radius: 6px;
+      width: 100px;
+      height: 32px;
+      background: #070b0d;
+      border-top-right-radius: 8px;
       border-top: 1px solid #1e293b;
       border-right: 1px solid #1e293b;
       z-index: 999999;
-      pointer-events: none;
+      pointer-events: auto;
     }
 
     .sv-shield-bottom-right {
       position: absolute;
       bottom: 0;
       right: 0;
-      width: 140px;
-      height: 24px;
-      background: #090e10;
-      border-top-left-radius: 6px;
+      width: 160px;
+      height: 30px;
+      background: #070b0d;
+      border-top-left-radius: 8px;
       border-top: 1px solid #1e293b;
       border-left: 1px solid #1e293b;
       z-index: 999999;
-      pointer-events: none;
+      pointer-events: auto;
     }
   </style>
 </head>
@@ -115,7 +139,11 @@ export class StreetviewTemplateService {
         <span class="sv-shield-dot"></span>
         <div class="sv-shield-title">Street View Uplink</div>
       </div>
+      <div class="sv-shield-sub">
+        SIGNAL ENCRYPTED // COORDINATES CLASSIFIED
+      </div>
     </div>
+    <div class="sv-shield-top-right"></div>
     <div class="sv-shield-bottom-left"></div>
     <div class="sv-shield-bottom-right"></div>
   </div>
@@ -141,7 +169,7 @@ export class StreetviewTemplateService {
         const _f = document.createElement('iframe');
         _f.src = _url;
         _f.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
-        _f.allowFullscreen = true;
+        _f.allowFullscreen = false;
         _f.setAttribute('referrerpolicy', 'no-referrer');
         _f.style.width = "100%";
         _f.style.height = "100%";

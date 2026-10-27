@@ -1,7 +1,6 @@
 import { Icon } from "../../../shared/components/Icon"
 import { GameButton } from "../../../shared/components/GameButton"
 import { LeafletMapView } from "./LeafletMapView"
-import { LiveStandingsWidget } from "./LiveStandingsWidget"
 import { MobileTimerPill } from "./MobileTimerPill"
 import type { Coordinates, Room } from "../../../types/game"
 
@@ -20,10 +19,6 @@ interface ExploreViewProps {
 }
 
 export function ExploreView({
-  currentRound,
-  totalRounds,
-  totalScore,
-  liveLeaderboard,
   hasGuessed,
   myPin,
   countdownSeconds,
@@ -33,15 +28,6 @@ export function ExploreView({
 }: ExploreViewProps) {
   return (
     <>
-      <div className="hidden md:block">
-        <LiveStandingsWidget
-          currentRound={currentRound}
-          leaderboard={liveLeaderboard}
-          totalRounds={totalRounds}
-          totalScore={totalScore}
-        />
-      </div>
-
       <aside className={`guess-console hidden md:block ${myPin ? "guess-console--active" : ""}`}>
         <div className="guess-heading">
           <span>
