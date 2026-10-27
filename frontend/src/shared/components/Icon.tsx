@@ -3,6 +3,8 @@ import React from "react"
 export type IconName =
   | "arrow"
   | "back"
+  | "baridimob"
+  | "buymeacoffee"
   | "chart"
   | "check"
   | "clock"
@@ -11,19 +13,24 @@ export type IconName =
   | "copy"
   | "crown"
   | "dice"
+  | "github"
   | "globe"
   | "heart"
   | "hourglass"
   | "lightning"
+  | "linkedin"
   | "lock"
   | "map"
   | "message"
   | "network"
+  | "paypal"
   | "pin"
   | "play"
   | "players"
   | "plus"
+  | "portfolio"
   | "radar"
+  | "redotpay"
   | "researcher"
   | "scale"
   | "settings"
@@ -37,7 +44,7 @@ export type IconName =
   | "vote"
   | "warning"
 
-const iconPaths: Record<IconName, React.ReactNode> = {
+const iconPaths: Partial<Record<IconName, React.ReactNode>> = {
   arrow: <path d="M5 12h14M13 6l6 6-6 6" />,
   back: <path d="M19 12H5M11 18l-6-6 6-6" />,
   chart: (
@@ -197,9 +204,122 @@ const iconPaths: Record<IconName, React.ReactNode> = {
   shield: <path d="M12 3 4.5 6v5.2c0 4.6 3.2 8.2 7.5 9.8 4.3-1.6 7.5-5.2 7.5-9.8V6L12 3Z" />,
 }
 
-export function Icon({ name, size = 20 }: { name: IconName; size?: number }) {
+export function Icon({
+  name,
+  size = 20,
+  className = "",
+}: {
+  name: IconName
+  size?: number
+  className?: string
+}) {
+  if (name === "portfolio") {
+    return (
+      <img
+        alt="Portfolio"
+        aria-hidden="true"
+        className={`icon icon--portfolio ${className}`.trim()}
+        height={size}
+        src="/icons/portfolio.svg"
+        style={{ width: size, height: size, objectFit: "contain" }}
+        width={size}
+      />
+    )
+  }
+
+  if (name === "github") {
+    return (
+      <img
+        alt="GitHub"
+        aria-hidden="true"
+        className={`icon icon--github ${className}`.trim()}
+        height={size}
+        src="/icons/github.svg"
+        style={{ width: size, height: size, objectFit: "contain" }}
+        width={size}
+      />
+    )
+  }
+
+  if (name === "linkedin") {
+    return (
+      <img
+        alt="LinkedIn"
+        aria-hidden="true"
+        className={`icon icon--linkedin ${className}`.trim()}
+        height={size}
+        src="/icons/linkedin.svg"
+        style={{ width: size, height: size, objectFit: "contain", borderRadius: 3 }}
+        width={size}
+      />
+    )
+  }
+
+  if (name === "paypal") {
+    return (
+      <img
+        alt="PayPal"
+        aria-hidden="true"
+        className={`icon icon--paypal ${className}`.trim()}
+        height={size}
+        src="/icons/paypal.svg"
+        style={{ width: size, height: size, objectFit: "contain" }}
+        width={size}
+      />
+    )
+  }
+
+  if (name === "redotpay") {
+    return (
+      <img
+        alt="RedotPay"
+        aria-hidden="true"
+        className={`icon icon--redotpay ${className}`.trim()}
+        height={size}
+        src="/icons/redotpay.png"
+        style={{ width: size, height: size, objectFit: "contain", borderRadius: 4 }}
+        width={size}
+      />
+    )
+  }
+
+  if (name === "baridimob") {
+    return (
+      <img
+        alt="BaridiMob"
+        aria-hidden="true"
+        className={`icon icon--baridimob ${className}`.trim()}
+        height={size}
+        src="/icons/baridimob.png"
+        style={{ width: size, height: size, objectFit: "contain" }}
+        width={size}
+      />
+    )
+  }
+
+  if (name === "buymeacoffee" || name === "coffee") {
+    return (
+      <img
+        alt="Buy Me a Coffee"
+        aria-hidden="true"
+        className={`icon icon--buymeacoffee ${className}`.trim()}
+        height={size}
+        src="/icons/buymeacoffee.svg"
+        style={{ width: size, height: size, objectFit: "contain" }}
+        width={size}
+      />
+    )
+  }
+
   return (
-    <svg aria-hidden="true" className="icon" fill="none" height={size} viewBox="0 0 24 24" width={size}>
+    <svg
+      aria-hidden="true"
+      className={`icon ${className}`.trim()}
+      fill="none"
+      height={size}
+      viewBox="0 0 24 24"
+      width={size}
+    >
       <g stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8">
         {iconPaths[name]}
       </g>

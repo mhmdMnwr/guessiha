@@ -1,0 +1,203 @@
+/* ==========================================================================
+   OFFICIAL BUY ME A COFFEE BUTTON — Exact Widget Design with Recognizable Liquid Motion
+   ========================================================================== */
+
+.bmc-exact-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  height: 46px;
+  padding: 0 20px 0 14px;
+  background-color: #FFDD00;
+  color: #000000;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 10px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3), 0 2px 4px rgba(255, 221, 0, 0.25);
+  cursor: pointer;
+  outline: none;
+  text-decoration: none;
+  user-select: none;
+  transition: transform 0.18s cubic-bezier(0.2, 0.9, 0.3, 1.2), box-shadow 0.18s ease, background-color 0.18s ease;
+  z-index: 10;
+}
+
+.bmc-exact-btn:hover {
+  background-color: #ffea38;
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), 0 0 20px rgba(255, 221, 0, 0.6);
+}
+
+.bmc-exact-btn:active {
+  transform: translateY(1px) scale(0.98);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+.bmc-btn-cup-slot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+  top: 1px;
+}
+
+.bmc-cup-svg {
+  display: block;
+  width: 25px;
+  height: 36px;
+  overflow: visible;
+}
+
+/* ==========================================================================
+   DYNAMIC HYDRODYNAMIC COFFEE LIQUID ANIMATION
+   Dual-layer undulating waves + rhythmic sloshing tilt + surface crema line
+   ========================================================================== */
+
+/* 1. Global rhythmic slosh & rock of the liquid mass inside the cup */
+@keyframes bmc-liquid-slosh-rock {
+  0% {
+    transform: rotate(-11deg) translateY(0.7px);
+  }
+  25% {
+    transform: rotate(0deg) translateY(-1.3px) scaleY(1.06);
+  }
+  50% {
+    transform: rotate(11deg) translateY(0.7px);
+  }
+  75% {
+    transform: rotate(0deg) translateY(-0.7px) scaleY(0.95);
+  }
+  100% {
+    transform: rotate(-11deg) translateY(0.7px);
+  }
+}
+
+.bmc-liquid-slosh-container {
+  transform-origin: 17.2px 34.5px;
+  animation: bmc-liquid-slosh-rock 2.3s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+  will-change: transform;
+}
+
+/* 2. Front Wave continuous horizontal fluid translation */
+@keyframes bmc-wave-flow-front {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-30px);
+  }
+}
+
+.bmc-wave-front-group {
+  animation: bmc-wave-flow-front 2.0s linear infinite;
+  will-change: transform;
+}
+
+/* 3. Back Wave counter-flow for visible fluid depth */
+@keyframes bmc-wave-flow-back {
+  0% {
+    transform: translateX(-30px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.bmc-wave-back-group {
+  animation: bmc-wave-flow-back 2.8s linear infinite;
+  will-change: transform;
+}
+
+/* 4. Surface reflection bubble that bobs with the wave crest */
+@keyframes bmc-bubble-bob {
+  0%, 100% {
+    transform: translate(-1.8px, 0.6px);
+    opacity: 0.85;
+  }
+  50% {
+    transform: translate(1.8px, -0.8px);
+    opacity: 0.95;
+  }
+}
+
+.bmc-liquid-bubble {
+  animation: bmc-bubble-bob 2.3s ease-in-out infinite;
+  transform-origin: 14.5px 31.2px;
+}
+
+/* 5. Spirited hover interaction: liquid churns faster on cursor hover */
+.bmc-exact-btn:hover .bmc-liquid-slosh-container {
+  animation-duration: 1.5s;
+}
+
+.bmc-exact-btn:hover .bmc-wave-front-group {
+  animation-duration: 1.3s;
+}
+
+.bmc-exact-btn:hover .bmc-wave-back-group {
+  animation-duration: 1.8s;
+}
+
+/* ==========================================================================
+   RISING STEAM WISPS
+   ========================================================================== */
+
+@keyframes bmc-steam-rise {
+  0% {
+    opacity: 0;
+    transform: translateY(2px) scaleX(0.85);
+  }
+  30% {
+    opacity: 0.45;
+  }
+  70% {
+    opacity: 0.3;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-5px) scaleX(1.15);
+  }
+}
+
+.bmc-steam-wisp {
+  animation: bmc-steam-rise 2.6s ease-out infinite;
+  transform-origin: center bottom;
+}
+
+.bmc-steam-wisp--1 {
+  animation-delay: 0s;
+}
+
+.bmc-steam-wisp--2 {
+  animation-delay: 1.2s;
+}
+
+/* ==========================================================================
+   OFFICIAL BMC CURSIVE TYPOGRAPHY
+   ========================================================================== */
+
+.bmc-btn-text {
+  font-family: "Cookie", "Caveat", "Brush Script MT", "Comic Sans MS", cursive, sans-serif;
+  font-size: 25px;
+  line-height: 1;
+  font-weight: 500;
+  letter-spacing: 0.4px;
+  color: #0D0C22;
+  padding-top: 3px;
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .bmc-exact-btn {
+    height: 40px;
+    padding: 0 15px 0 11px;
+    gap: 8px;
+  }
+  .bmc-btn-text {
+    font-size: 21px;
+  }
+  .bmc-cup-svg {
+    width: 22px;
+    height: 32px;
+  }
+}

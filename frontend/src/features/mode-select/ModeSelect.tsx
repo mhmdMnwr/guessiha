@@ -4,8 +4,11 @@ import { EffectsLayer } from "../../shared/components/EffectsLayer"
 import { Icon } from "../../shared/components/Icon"
 import { FeedbackPanel } from "./components/FeedbackPanel"
 import { SupportDeveloperPanel } from "./components/SupportDeveloperPanel"
+import { CoffeeSupportModal } from "./components/CoffeeSupportModal"
+import { NeonWorldMapBackground } from "./components/NeonWorldMapBackground"
+import { BuyMeACoffeeButton } from "./components/BuyMeACoffeeButton"
 
-type MenuModal = "feedback" | "support" | null
+type MenuModal = "feedback" | "support" | "coffee" | null
 
 const RANDOM_CALLSIGNS = [
   "VIPER", "GHOST", "NOMAD", "SPECTRE", "FALCON", "TITAN",
@@ -51,19 +54,10 @@ export function ModeSelect({
     <main className={`entry-screen ${isLaunching ? "entry-screen--launching" : ""}`}>
       <EffectsLayer />
       <div className="ambient-grid" />
+      <NeonWorldMapBackground />
 
       <header className="entry-header">
-        <div className="logo">
-          <span className="logo-icon">
-            <Icon name="researcher" size={26} />
-          </span>
-          <span>guessiha</span>
-        </div>
-        <div className="entry-operative-pill" title="Network status">
-          <span className="entry-status-dot" />
-          <span className="text-slate-400">NETWORK:</span>
-          <span className="text-emerald-400 font-bold tracking-wider">ONLINE</span>
-        </div>
+        <BuyMeACoffeeButton onClick={() => setActiveModal("coffee")} />
       </header>
 
       <section className="entry-content">
@@ -162,10 +156,14 @@ export function ModeSelect({
       {activeModal && (
         <div className="menu-modal-backdrop" onClick={() => setActiveModal(null)}>
           <div className="menu-modal-box" onClick={(e) => e.stopPropagation()}>
-            {activeModal === "feedback" ? (
+            {activeModal === "feedback" && (
               <FeedbackPanel onBackToPlay={() => setActiveModal(null)} username={username} />
-            ) : (
+            )}
+            {activeModal === "support" && (
               <SupportDeveloperPanel onBackToPlay={() => setActiveModal(null)} />
+            )}
+            {activeModal === "coffee" && (
+              <CoffeeSupportModal onBackToPlay={() => setActiveModal(null)} />
             )}
           </div>
         </div>

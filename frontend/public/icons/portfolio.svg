@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#141414" />
+      <stop offset="100%" stop-color="#070707" />
+    </linearGradient>
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff4747" />
+      <stop offset="50%" stop-color="#c41e1e" />
+      <stop offset="100%" stop-color="#800f0f" />
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="16" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Dark Rounded Hexagon/Box Background -->
+  <rect width="512" height="512" rx="128" fill="url(#bgGrad)" />
+  <rect x="12" y="12" width="488" height="488" rx="116" stroke="url(#accentGrad)" stroke-width="24" stroke-opacity="0.8" />
+  
+  <!-- Subtle inner glow ring -->
+  <rect x="36" y="36" width="440" height="440" rx="92" stroke="#ff4747" stroke-width="4" stroke-opacity="0.3" />
+
+  <!-- Monogram / Cyber Star 'M' Emblem -->
+  <g filter="url(#glow)">
+    <!-- Stylized Futuristic 'M' -->
+    <path d="M 140 350 L 140 170 L 210 270 L 256 330 L 302 270 L 372 170 L 372 350" 
+          stroke="url(#accentGrad)" 
+          stroke-width="40" 
+          stroke-linecap="round" 
+          stroke-linejoin="round" />
+    
+    <!-- Center Star / Sparkle Accent -->
+    <circle cx="256" cy="180" r="16" fill="#ffffff" />
+  </g>
+  
+  <!-- White highlight overlay on M -->
+  <path d="M 140 350 L 140 170 L 210 270 L 256 330 L 302 270 L 372 170 L 372 350" 
+        stroke="#ffffff" 
+        stroke-width="12" 
+        stroke-linecap="round" 
+        stroke-linejoin="round" 
+        stroke-opacity="0.9" />
+</svg>

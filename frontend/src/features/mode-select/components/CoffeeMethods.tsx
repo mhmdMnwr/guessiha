@@ -21,8 +21,8 @@ export default function CoffeeMethods() {
         onClick={() => copyToClipboard(PAYPAL_EMAIL, "paypal")}
         title="Click to copy PayPal email"
       >
-        <span className="support-action-icon text-sky-400 border-sky-400/40 bg-sky-400/10">
-          <Icon name="globe" size={20} />
+        <span className="support-action-icon text-sky-400 border-sky-400/40 bg-sky-400/10 shrink-0">
+          <Icon name="paypal" size={24} />
         </span>
         <div className="flex-1 min-w-0">
           <strong className="block text-xs sm:text-sm font-bold tracking-wider uppercase text-white truncate">
@@ -51,8 +51,8 @@ export default function CoffeeMethods() {
         onClick={() => copyToClipboard(REDOTPAY_UID, "redot")}
         title="Click to copy RedotPay UID"
       >
-        <span className="support-action-icon text-rose-400 border-rose-400/40 bg-rose-400/10">
-          <Icon name="shield" size={20} />
+        <span className="support-action-icon text-rose-400 border-rose-400/40 bg-rose-400/10 shrink-0">
+          <Icon name="redotpay" size={24} />
         </span>
         <div className="flex-1 min-w-0">
           <strong className="block text-xs sm:text-sm font-bold tracking-wider uppercase text-white truncate">
@@ -81,8 +81,8 @@ export default function CoffeeMethods() {
         onClick={() => copyToClipboard(BARIDIMOB_RIP, "ccp")}
         title="Click to copy BaridiMob RIP"
       >
-        <span className="support-action-icon text-emerald-400 border-emerald-400/40 bg-emerald-400/10">
-          <Icon name="check" size={20} />
+        <span className="support-action-icon text-emerald-400 border-emerald-400/40 bg-emerald-400/10 shrink-0">
+          <Icon name="baridimob" size={26} />
         </span>
         <div className="flex-1 min-w-0">
           <strong className="block text-xs sm:text-sm font-bold tracking-wider uppercase text-white truncate">

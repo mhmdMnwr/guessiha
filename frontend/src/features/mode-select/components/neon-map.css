@@ -1,0 +1,59 @@
+/* ==========================================================================
+   NEON WORLD MAP BACKGROUND — Simple, steady, top-to-bottom luminous glow
+   ========================================================================== */
+
+.neon-world-map-wrapper {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+  opacity: 0.85;
+}
+
+/* Smooth linear vignette for text readability — no circular artifacts */
+.neon-world-map-wrapper::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(9, 13, 16, 0.45) 0%,
+    rgba(9, 13, 16, 0.12) 40%,
+    rgba(9, 13, 16, 0.6) 100%
+  );
+  pointer-events: none;
+}
+
+.neon-world-map-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  transform: translateY(48px);
+}
+
+/* Base resting landmass */
+.neon-landmass-base {
+  transition: opacity 0.3s ease;
+}
+
+/* Luminous top-to-bottom glow sweep */
+.neon-landmass-glow-wave {
+  opacity: 0.95;
+}
+
+.vertical-glow-wave {
+  animation: glow-wave-sweep 12s cubic-bezier(0.35, 0, 0.25, 1) infinite;
+  transform-origin: top center;
+}
+
+@keyframes glow-wave-sweep {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(960px);
+  }
+}

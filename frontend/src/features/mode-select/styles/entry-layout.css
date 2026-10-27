@@ -1,25 +1,41 @@
 /* ==========================================================================
-   GAME MAIN MENU LAYOUT — Fluid full-screen responsive layout & menu blades
+   GAME MAIN MENU LAYOUT — Refined tactical spacing, hierarchy & optical rhythm
    ========================================================================== */
 
 .entry-screen {
   min-height: 100vh;
+  min-height: 100dvh;
   width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  position: relative;
+  overflow-x: hidden;
 }
 
-.entry-header,
+/* Header bar with deliberate alignment & optical spacing */
+.entry-header {
+  width: 100%;
+  max-width: 1720px;
+  height: clamp(68px, 8vh, 92px);
+  padding: 0 clamp(24px, 5vw, 84px);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  z-index: 10;
+}
+
 .lobby-nav {
   width: 100%;
-  max-width: 1800px;
-  height: clamp(76px, 9vh, 104px);
-  padding: 0 clamp(20px, 5vw, 96px);
+  max-width: 1720px;
+  height: clamp(68px, 8vh, 92px);
+  padding: 0 clamp(24px, 5vw, 84px);
   margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  z-index: 10;
 }
 
 .entry-operative-pill {
@@ -43,28 +59,34 @@
   box-shadow: 0 0 8px var(--acid);
 }
 
+/* Main Content: Proportional grid placement leaving generous space for glowing world map */
 .entry-content {
   flex: 1;
   width: 100%;
-  max-width: 1800px;
+  max-width: 1720px;
   margin: 0 auto;
-  padding: clamp(24px, 4vh, 64px) clamp(20px, 5vw, 96px) clamp(40px, 7vh, 88px);
+  padding: clamp(12px, 2.5vh, 44px) clamp(24px, 5vw, 84px) clamp(28px, 5vh, 56px);
   display: flex;
   align-items: center;
+  z-index: 5;
 }
 
+/* Tactical Menu Control Column: Constrained to human ergonomics (~480px width) */
 .main-menu-left {
-  width: min(100%, clamp(340px, 44vw, 680px));
-  animation: interface-rise 550ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  width: min(100%, clamp(360px, 38vw, 520px));
+  animation: interface-rise 500ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  display: flex;
+  flex-direction: column;
 }
 
+/* Primary Game Title: Impactful display typography */
 .entry-title {
   margin: 0;
   font-family: var(--heading);
-  font-size: clamp(72px, 9vw, 148px);
-  line-height: 0.88;
+  font-size: clamp(64px, 7.8vw, 124px);
+  line-height: 0.9;
   font-weight: 800;
-  letter-spacing: 1.5px;
+  letter-spacing: 2px;
   text-transform: uppercase;
   position: relative;
   color: #ffffff;
@@ -83,107 +105,22 @@
   animation: title-glitch 7s steps(1) infinite;
 }
 
+/* Concise Subtitle: Strict line-length for effortless reading */
 .entry-subtitle {
-  max-width: 58ch;
-  margin-top: clamp(12px, 1.8vh, 22px);
-  color: var(--muted);
-  font-size: clamp(14px, 1.15vw, 19px);
-  line-height: 1.6;
+  max-width: 46ch;
+  margin-top: clamp(10px, 1.5vh, 16px);
+  color: #94a3b8;
+  font-size: clamp(14px, 1.05vw, 17px);
+  line-height: 1.55;
+  letter-spacing: 0.2px;
 }
 
-.main-menu-nav {
-  margin-top: clamp(24px, 3.8vh, 44px);
-  display: flex;
-  flex-direction: column;
-  gap: clamp(12px, 1.6vh, 18px);
-}
-
-.menu-blade {
-  width: 100%;
-  min-height: clamp(68px, 8.2vh, 92px);
-  padding: clamp(14px, 1.8vh, 22px) clamp(18px, 2vw, 28px);
-  display: flex;
-  align-items: center;
-  gap: clamp(14px, 1.5vw, 22px);
-  text-align: left;
-  color: #e2e8f0;
-  border: 1px solid var(--line);
-  border-left: 4px solid transparent;
-  background: rgba(14, 20, 23, 0.84);
-  clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 0 100%);
-  cursor: pointer;
-  transition: all 180ms ease;
-}
-
-.menu-blade:hover {
-  border-color: #475569;
-  border-left-color: var(--cyan);
-  background: #131b1e;
-  transform: translateX(8px);
-}
-
-.menu-blade--active {
-  border-color: rgba(199, 255, 61, 0.55);
-  border-left: 4px solid var(--acid);
-  background: linear-gradient(90deg, rgba(199, 255, 61, 0.14), rgba(17, 25, 27, 0.92) 70%);
-}
-
-.menu-blade-icon {
-  width: clamp(44px, 3.4vw, 54px);
-  height: clamp(44px, 3.4vw, 54px);
-  display: grid;
-  place-items: center;
-  color: var(--cyan);
-  border: 1px solid rgba(67, 220, 255, 0.35);
-  background: rgba(67, 220, 255, 0.08);
-  flex-shrink: 0;
-}
-
-.menu-blade--active .menu-blade-icon {
-  color: #071007;
-  border-color: var(--acid);
-  background: var(--acid);
-}
-
-@media (max-width: 640px) {
-  .entry-header {
-    height: auto;
-    padding: max(16px, calc(var(--sat, 0px) + 8px)) 16px 12px;
-    gap: 10px;
-    flex-wrap: wrap;
-  }
-  .entry-operative-pill {
-    padding: 6px 12px;
-    font-size: 11px;
-  }
-  .entry-operative-pill input {
-    width: 100px;
-  }
-  .entry-title {
-    font-size: 46px;
-  }
-  .entry-subtitle {
-    font-size: 13px;
-    margin-top: 8px;
-  }
-  .entry-content {
-    padding: 16px 16px max(32px, calc(var(--sab, 0px) + 20px));
-  }
-  .menu-blade {
-    padding: 14px 16px;
-    gap: 14px;
-  }
-}
-
-/* ==========================================================================
-   SIMPLE USERNAME INPUT BAR — Direct, sleek, no boring descriptions
-   ========================================================================== */
-
+/* Username input bar: Aligned with the menu blade grid rhythm */
 .username-input-bar {
-  margin-top: clamp(16px, 2.5vh, 26px);
+  margin-top: clamp(18px, 2.6vh, 28px);
   width: 100%;
-  min-height: clamp(52px, 6.5vh, 64px);
-  padding: 0 clamp(14px, 1.6vw, 20px);
+  min-height: clamp(52px, 6.2vh, 60px);
+  padding: 0 clamp(14px, 1.5vw, 18px);
   display: flex;
   align-items: center;
   gap: 12px;
@@ -215,7 +152,7 @@
   outline: none;
   color: #ffffff;
   font-family: monospace;
-  font-size: clamp(14px, 1.1vw, 17px);
+  font-size: clamp(13px, 1vw, 16px);
   font-weight: 700;
   letter-spacing: 1px;
   text-transform: uppercase;
@@ -231,12 +168,12 @@
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.12);
   color: #cbd5e1;
-  width: 36px;
-  height: 36px;
+  width: 34px;
+  height: 34px;
   display: grid;
   place-items: center;
   border-radius: 6px;
-  font-size: 16px;
+  font-size: 15px;
   cursor: pointer;
   flex-shrink: 0;
   transition: all 150ms ease;
@@ -245,5 +182,115 @@
 .username-random-btn:hover {
   background: rgba(67, 220, 255, 0.2);
   border-color: var(--cyan, #43dcff);
+  color: #ffffff;
   transform: scale(1.05);
+}
+
+/* Nav Blades stack: Consistent spacing with distinct primary action */
+.main-menu-nav {
+  margin-top: clamp(16px, 2.2vh, 24px);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(10px, 1.3vh, 14px);
+}
+
+/* Menu Blade: Kept original design, calibrated paddings & heights */
+.menu-blade {
+  width: 100%;
+  min-height: clamp(62px, 7.2vh, 76px);
+  padding: clamp(12px, 1.4vh, 16px) clamp(16px, 1.6vw, 22px);
+  display: flex;
+  align-items: center;
+  gap: clamp(14px, 1.4vw, 20px);
+  text-align: left;
+  color: #e2e8f0;
+  border: 1px solid var(--line, #273237);
+  border-left: 4px solid transparent;
+  background: rgba(14, 20, 23, 0.86);
+  clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 0 100%);
+  cursor: pointer;
+  transition: all 180ms ease;
+}
+
+.menu-blade:hover {
+  border-color: #475569;
+  border-left-color: var(--cyan, #43dcff);
+  background: #131b1e;
+  transform: translateX(6px);
+}
+
+/* Primary Play Action: Enhanced prominence without altering core visual identity */
+.menu-blade--active {
+  min-height: clamp(66px, 7.8vh, 82px);
+  border-color: rgba(199, 255, 61, 0.55);
+  border-left: 4px solid var(--acid, #c7ff3d);
+  background: linear-gradient(90deg, rgba(199, 255, 61, 0.14), rgba(17, 25, 27, 0.92) 70%);
+}
+
+.menu-blade-icon {
+  width: clamp(40px, 3.2vw, 48px);
+  height: clamp(40px, 3.2vw, 48px);
+  display: grid;
+  place-items: center;
+  color: var(--cyan, #43dcff);
+  border: 1px solid rgba(67, 220, 255, 0.35);
+  background: rgba(67, 220, 255, 0.08);
+  flex-shrink: 0;
+}
+
+.menu-blade--active .menu-blade-icon {
+  color: #071007;
+  border-color: var(--acid, #c7ff3d);
+  background: var(--acid, #c7ff3d);
+}
+
+/* ==========================================================================
+   MOBILE RESPONSIVENESS & SAFE INSETS
+   ========================================================================== */
+
+@media (max-width: 640px) {
+  .entry-header {
+    height: auto;
+    padding: max(14px, env(safe-area-inset-top, 14px)) 16px 8px;
+  }
+
+  .entry-content {
+    padding: 12px 16px max(24px, env(safe-area-inset-bottom, 24px));
+    align-items: flex-start;
+  }
+
+  .main-menu-left {
+    width: 100%;
+  }
+
+  .entry-title {
+    font-size: clamp(44px, 12vw, 56px);
+  }
+
+  .entry-subtitle {
+    font-size: 13.5px;
+    margin-top: 8px;
+    max-width: 100%;
+  }
+
+  .username-input-bar {
+    margin-top: 16px;
+    min-height: 52px;
+    padding: 0 14px;
+  }
+
+  .main-menu-nav {
+    margin-top: 14px;
+    gap: 10px;
+  }
+
+  .menu-blade {
+    min-height: 60px;
+    padding: 12px 14px;
+    gap: 12px;
+  }
+
+  .menu-blade--active {
+    min-height: 64px;
+  }
 }
