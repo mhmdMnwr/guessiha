@@ -90,18 +90,14 @@ export default function DesktopGameHud({
         </div>
 
         <div className="game-view-switcher">
-          {(["explore", "atlas", "standings"] as const).map((item) => (
+          {(["explore", "atlas"] as const).map((item) => (
             <button
               className={view === item ? "active" : ""}
               key={item}
               onClick={() => setView(item)}
               type="button"
             >
-              {item === "explore"
-                ? "STREET VIEW [G]"
-                : item === "atlas"
-                  ? "FULL ATLAS [M]"
-                  : "STANDINGS [S]"}
+              {item === "explore" ? "STREET VIEW [G]" : "FULL ATLAS [M]"}
             </button>
           ))}
         </div>

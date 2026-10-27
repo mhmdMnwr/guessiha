@@ -1,15 +1,14 @@
 import { Icon } from "../../../shared/components/Icon"
 import { GameButton } from "../../../shared/components/GameButton"
 import { LeafletMapView } from "./LeafletMapView"
-import { LiveStandingsWidget } from "./LiveStandingsWidget"
 import { MobileTimerPill } from "./MobileTimerPill"
 import type { Coordinates } from "../../../types/game"
 
 interface AtlasViewProps {
-  currentRound: number
-  totalRounds: number
-  totalScore: number
-  liveLeaderboard: any[]
+  currentRound?: number
+  totalRounds?: number
+  totalScore?: number
+  liveLeaderboard?: any[]
   myPin: Coordinates | null
   hasGuessed: boolean
   countdownSeconds?: number | null
@@ -19,10 +18,6 @@ interface AtlasViewProps {
 }
 
 export function AtlasView({
-  currentRound,
-  totalRounds,
-  totalScore,
-  liveLeaderboard,
   myPin,
   hasGuessed,
   countdownSeconds,
@@ -84,16 +79,6 @@ export function AtlasView({
           pin={myPin}
           zoom={3}
         />
-
-        <div className="hidden md:block">
-          <LiveStandingsWidget
-            className="live-standings-widget--atlas"
-            currentRound={currentRound}
-            leaderboard={liveLeaderboard}
-            totalRounds={totalRounds}
-            totalScore={totalScore}
-          />
-        </div>
       </div>
 
       <footer className="atlas-footer">

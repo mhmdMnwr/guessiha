@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react"
 import "./game.css"
-import { LeaderboardScreen } from "./components/LeaderboardScreen"
 import { GameHudTop, type GameViewMode } from "./components/GameHudTop"
 import ExploreView from "./components/ExploreView"
 import AtlasView from "./components/AtlasView"
@@ -49,7 +48,7 @@ export function GameScreen(props: GameScreenProps) {
     typeof window !== "undefined" && new URLSearchParams(window.location.search).get("preview") === "atlas" ? "atlas" : "explore"
   )
 
-  // Keyboard navigation: "m" -> toggle Atlas/Explore, "s" -> toggle Standings/Explore, "Escape" -> Explore
+  // Keyboard navigation: "m" -> toggle Atlas/Explore, "g" / "Escape" -> Explore
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
       const target = e.target as HTMLElement | null
@@ -59,9 +58,6 @@ export function GameScreen(props: GameScreenProps) {
       if (key === "m") {
         e.preventDefault()
         setView((prev) => (prev === "atlas" ? "explore" : "atlas"))
-      } else if (key === "s") {
-        e.preventDefault()
-        setView((prev) => (prev === "standings" ? "explore" : "standings"))
       } else if (key === "g" || key === "escape") {
         e.preventDefault()
         setView("explore")
@@ -73,6 +69,11 @@ export function GameScreen(props: GameScreenProps) {
 
   const isResults = Boolean(roundResults)
   const isGameOver = Boolean(gameOver)
+
+  // When a new round starts or results dismiss, ALWAYS return the player to the street view page
+  useEffect(() => {
+    setView("explore")
+  }, [currentRound, isResults])
   const telemetry = deriveGameTelemetry({ roundResults, gameOver, players, username, clientId, isHost, totalScore, hasGuessed })
   const activePlayProps = {
     room, currentRound, totalRounds, totalScore,
@@ -116,12 +117,6 @@ export function GameScreen(props: GameScreenProps) {
         <AtlasView
           {...activePlayProps}
           onCloseAtlas={() => setView("explore")}
-        />
-      )}
-      {view === "standings" && !isResults && !isGameOver && (
-        <LeaderboardScreen
-          leaderboard={telemetry.liveLeaderboard}
-          onClose={() => setView("explore")}
         />
       )}
 

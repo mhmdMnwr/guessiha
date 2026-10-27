@@ -83,16 +83,6 @@ export default function MobileGameHud({
             <Icon name="crown" size={16} />
           </button>
         )}
-
-        <button
-          aria-label="View Standings"
-          className={`hud-icon-btn ${view === "standings" ? "hud-icon-btn--active" : ""}`}
-          onClick={() => setView(view === "standings" ? "explore" : "standings")}
-          title="Live Standings"
-          type="button"
-        >
-          <Icon name="chart" size={18} />
-        </button>
       </div>
     </header>
   )
