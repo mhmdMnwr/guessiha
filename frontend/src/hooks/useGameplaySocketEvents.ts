@@ -40,7 +40,7 @@ export function bindGameplaySocketEvents({ socket, state, addToast }: GameplaySo
     if (isMe) {
       state.setHasGuessed(true)
     } else if (data.username) {
-      addToast(`⚡ ${data.username} locked in!`, "info")
+      addToast(`${data.username} locked in!`, "info")
     }
   })
 

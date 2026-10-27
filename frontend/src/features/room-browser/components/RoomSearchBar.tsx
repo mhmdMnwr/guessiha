@@ -39,11 +39,11 @@ export function RoomSearchBar({
         {searchQuery && (
           <button
             aria-label="Clear search"
-            className="text-slate-400 hover:text-white font-mono text-xs px-2 py-1 cursor-pointer bg-transparent border-0"
+            className="text-slate-400 hover:text-white font-mono text-xs px-2 py-1 cursor-pointer bg-transparent border-0 inline-flex items-center gap-1"
             onClick={() => onSearchChange("")}
             type="button"
           >
-            ✕ CLEAR
+            <Icon name="close" size={13} /> CLEAR
           </button>
         )}
       </div>

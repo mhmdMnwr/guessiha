@@ -74,13 +74,13 @@ export default function MobileGameHud({
         {!isHost && onDemandCrown && (
           <button
             aria-label="Demand Crown"
-            className="hud-crown-btn"
+            className="hud-crown-btn flex items-center justify-center text-amber-400"
             disabled={crownClaimPending}
             onClick={onDemandCrown}
             title="Demand Host Leadership"
             type="button"
           >
-            👑
+            <Icon name="crown" size={16} />
           </button>
         )}
 

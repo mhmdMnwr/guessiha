@@ -1,4 +1,5 @@
 import type { CrownElectionResult } from "../../types/game"
+import { Icon } from "./Icon"
 
 interface CrownResultBannerProps {
   electionResult: CrownElectionResult
@@ -26,7 +27,9 @@ export default function CrownResultBanner({
       >
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <span className="text-2xl">{isSuccess ? "👑" : "⚖️"}</span>
+            <span className={isSuccess ? "text-amber-400" : "text-neutral-400"}>
+              <Icon name={isSuccess ? "crown" : "scale"} size={24} />
+            </span>
             <div>
               <h2
                 className={`text-xs font-mono font-bold uppercase tracking-wider ${
@@ -45,7 +48,7 @@ export default function CrownResultBanner({
               onClick={onDismissResult}
               type="button"
             >
-              ✕
+              <Icon name="close" size={16} />
             </button>
           )}
         </div>

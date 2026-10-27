@@ -11,87 +11,100 @@ export class StreetviewTemplateService {
   <title>geussiha</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body { width: 100%; height: 100%; overflow: hidden; background: #020617; }
-    #sv-mount { width: 100%; height: 100%; position: absolute; inset: 0; overflow: hidden; }
-    iframe { width: 100%; height: 100%; border: 0; display: block; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #020617;
+      touch-action: pan-x pan-y pinch-zoom;
+      overscroll-behavior: none;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    #sv-mount {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      touch-action: pan-x pan-y pinch-zoom;
+    }
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+      touch-action: pan-x pan-y pinch-zoom;
+    }
     
-    /* Anti-Spoiler Top-Left Shield */
+    /* Sleek, Non-Obstructive Anti-Spoiler Badge (covers only Google title text without blocking road clicks) */
     .sv-shield-top-left {
       position: absolute;
       top: 0;
       left: 0;
-      width: 480px;
-      max-width: 86vw;
-      height: 140px;
-      background: #020617;
-      border-bottom-right-radius: 12px;
-      border-bottom: 2px solid #1e293b;
-      border-right: 2px solid #1e293b;
+      width: 220px;
+      max-width: 60vw;
+      height: 36px;
+      background: #090e10;
+      border-bottom-right-radius: 8px;
+      border-bottom: 1px solid #1e293b;
+      border-right: 1px solid #1e293b;
       z-index: 999999;
       pointer-events: auto;
       display: flex;
       align-items: center;
-      padding: 0 24px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.85);
+      padding: 0 12px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.7);
     }
-    .sv-shield-brand { display: flex; flex-direction: column; gap: 4px; }
+    .sv-shield-brand { display: flex; align-items: center; gap: 8px; }
     .sv-shield-title {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace, sans-serif;
-      font-size: 13px;
+      font-size: 11px;
       font-weight: 800;
-      letter-spacing: 1.5px;
+      letter-spacing: 1.2px;
       color: #38bdf8;
       text-transform: uppercase;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
     }
     .sv-shield-dot {
-      width: 8px;
-      height: 8px;
+      width: 6px;
+      height: 6px;
       background: #10b981;
       border-radius: 50%;
-      box-shadow: 0 0 10px #10b981;
+      box-shadow: 0 0 8px #10b981;
       animation: sv-pulse 1.8s infinite alternate;
     }
     @keyframes sv-pulse { from { opacity: 0.4; } to { opacity: 1; } }
-    .sv-shield-sub {
-      font-family: monospace;
-      font-size: 11px;
-      color: #94a3b8;
-      letter-spacing: 0.5px;
-    }
 
-    /* Anti-Spoiler Bottom-Left Shield */
+    /* Compact Bottom Shields */
     .sv-shield-bottom-left {
       position: absolute;
       bottom: 0;
       left: 0;
-      width: 320px;
-      max-width: 70vw;
-      height: 48px;
-      background: #020617;
-      border-top-right-radius: 10px;
-      border-top: 2px solid #1e293b;
-      border-right: 2px solid #1e293b;
+      width: 85px;
+      height: 26px;
+      background: #090e10;
+      border-top-right-radius: 6px;
+      border-top: 1px solid #1e293b;
+      border-right: 1px solid #1e293b;
       z-index: 999999;
-      pointer-events: auto;
+      pointer-events: none;
     }
 
-    /* Anti-Spoiler Bottom-Right Shield */
     .sv-shield-bottom-right {
       position: absolute;
       bottom: 0;
       right: 0;
-      width: 280px;
-      max-width: 65vw;
-      height: 38px;
-      background: #020617;
-      border-top-left-radius: 10px;
-      border-top: 2px solid #1e293b;
-      border-left: 2px solid #1e293b;
+      width: 140px;
+      height: 24px;
+      background: #090e10;
+      border-top-left-radius: 6px;
+      border-top: 1px solid #1e293b;
+      border-left: 1px solid #1e293b;
       z-index: 999999;
-      pointer-events: auto;
+      pointer-events: none;
     }
   </style>
 </head>
@@ -99,13 +112,8 @@ export class StreetviewTemplateService {
   <div id="sv-mount">
     <div class="sv-shield-top-left">
       <div class="sv-shield-brand">
-        <div class="sv-shield-title">
-          <span class="sv-shield-dot"></span>
-          <span>Street View Uplink</span>
-        </div>
-        <div class="sv-shield-sub">
-          SIGNAL ENCRYPTED // ANTI-SPOILER ACTIVE
-        </div>
+        <span class="sv-shield-dot"></span>
+        <div class="sv-shield-title">Street View Uplink</div>
       </div>
     </div>
     <div class="sv-shield-bottom-left"></div>

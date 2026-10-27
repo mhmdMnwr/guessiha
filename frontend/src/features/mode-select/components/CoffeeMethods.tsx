@@ -36,7 +36,13 @@ export default function CoffeeMethods() {
               : "border-sky-500/30 bg-sky-500/10 text-sky-300"
           }`}
         >
-          {copiedMethod === "paypal" ? "✓ COPIED" : "COPY EMAIL"}
+          {copiedMethod === "paypal" ? (
+            <span className="inline-flex items-center gap-1">
+              <Icon name="check" size={12} /> COPIED
+            </span>
+          ) : (
+            "COPY EMAIL"
+          )}
         </span>
       </div>
 
@@ -60,7 +66,13 @@ export default function CoffeeMethods() {
               : "border-rose-500/30 bg-rose-500/10 text-rose-300"
           }`}
         >
-          {copiedMethod === "redot" ? "✓ COPIED" : "COPY UID"}
+          {copiedMethod === "redot" ? (
+            <span className="inline-flex items-center gap-1">
+              <Icon name="check" size={12} /> COPIED
+            </span>
+          ) : (
+            "COPY UID"
+          )}
         </span>
       </div>
 
@@ -84,7 +96,13 @@ export default function CoffeeMethods() {
               : "border-emerald-500/30 bg-emerald-500/10 text-emerald-300"
           }`}
         >
-          {copiedMethod === "ccp" ? "✓ COPIED" : "COPY RIP"}
+          {copiedMethod === "ccp" ? (
+            <span className="inline-flex items-center gap-1">
+              <Icon name="check" size={12} /> COPIED
+            </span>
+          ) : (
+            "COPY RIP"
+          )}
         </span>
       </div>
     </div>

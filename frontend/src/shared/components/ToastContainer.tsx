@@ -63,14 +63,14 @@ export function ToastContainer({ toasts, onDismiss }: ToastContainerProps) {
             </div>
             <button
               aria-label="Dismiss notification"
-              className="text-slate-400 hover:text-white text-xs font-mono p-0.5 transition-colors shrink-0 cursor-pointer"
+              className="text-slate-400 hover:text-white p-0.5 transition-colors shrink-0 cursor-pointer bg-transparent border-0 flex items-center justify-center"
               onClick={(e) => {
                 e.stopPropagation()
                 onDismiss(toast.id)
               }}
               type="button"
             >
-              ✕
+              <Icon name="close" size={14} />
             </button>
           </div>
         )

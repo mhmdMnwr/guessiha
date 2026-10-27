@@ -70,7 +70,10 @@ export function Lobby({
 
         <div className="mobile-room-info">
           <span className="mobile-room-name truncate">{room.name}</span>
-          <span className="mobile-room-privacy">{room.isPrivate ? "🔒 PRIVATE" : "🌐 PUBLIC"}</span>
+          <span className="mobile-room-privacy inline-flex items-center gap-1">
+            <Icon name={room.isPrivate ? "lock" : "globe"} size={11} />
+            {room.isPrivate ? "PRIVATE" : "PUBLIC"}
+          </span>
         </div>
 
         <button
@@ -109,7 +112,7 @@ export function Lobby({
             <span className="launch-symbol"><Icon name={isHost ? "crown" : "radar"} size={22} /></span>
             <span>
               <strong>{isHost ? "ROOM READY" : "AWAITING HOST"}</strong>
-              <small>{isHost ? "You have the Crown 👑. Commence when ready." : "Standing by for host to commence match."}</small>
+              <small>{isHost ? "You are the Room Host. Commence when ready." : "Standing by for host to commence match."}</small>
             </span>
           </div>
           {isHost ? (
@@ -117,7 +120,9 @@ export function Lobby({
           ) : (
             <div className="text-xs font-mono text-amber-300 uppercase tracking-widest px-4 py-2.5 bg-slate-900/90 border border-amber-600/50 rounded-lg flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
-              <span>WAITING FOR HOST 👑</span>
+              <span className="inline-flex items-center gap-1.5">
+                WAITING FOR HOST <Icon name="crown" size={13} />
+              </span>
             </div>
           )}
         </section>

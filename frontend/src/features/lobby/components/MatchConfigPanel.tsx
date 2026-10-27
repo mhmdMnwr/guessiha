@@ -44,7 +44,13 @@ export function MatchConfigPanel({
             MATCH CONFIG
           </div>
           <span className="panel-caption">
-            {isHost ? "CONFIGURED BY YOU (HOST)" : "CONFIGURED BY HOST 👑"}
+            {isHost ? (
+              "CONFIGURED BY YOU (HOST)"
+            ) : (
+              <span className="inline-flex items-center gap-1">
+                CONFIGURED BY HOST <Icon name="crown" size={11} />
+              </span>
+            )}
           </span>
         </div>
         <Icon name="shield" />

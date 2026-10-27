@@ -41,10 +41,10 @@ export function SquadPanel({
             className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-mono font-bold uppercase tracking-wider text-amber-300 bg-amber-950/60 hover:bg-amber-900/80 border border-amber-600/60 rounded transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_10px_rgba(245,158,11,0.2)]"
             disabled={crownClaimPending}
             onClick={onDemandCrown}
-            title="Challenge Squad Leadership"
+            title="Challenge Room Leadership"
             type="button"
           >
-            👑 {crownClaimPending ? "CHALLENGING..." : "DEMAND CROWN"}
+            <Icon name="crown" size={13} /> {crownClaimPending ? "CHALLENGING..." : "DEMAND CROWN"}
           </button>
         )}
       </div>
@@ -62,8 +62,8 @@ export function SquadPanel({
                 <strong>
                   {player.username}
                   {player.isHost && (
-                    <i className="inline-flex items-center gap-1 font-bold">
-                      👑 LEADER
+                    <i className="inline-flex items-center gap-1 font-bold text-amber-400">
+                      <Icon name="crown" size={12} /> HOST
                     </i>
                   )}
                 </strong>
@@ -75,7 +75,7 @@ export function SquadPanel({
                 {isHost && !player.isHost && onKickPlayer && (
                   <button
                     aria-label={`Kick ${player.username}`}
-                    className="kick-btn ml-1 px-2 py-0.5 text-xs font-mono font-bold text-rose-400 hover:text-white bg-rose-950/70 hover:bg-rose-700 border border-rose-700 rounded transition-all cursor-pointer"
+                    className="kick-btn ml-1 px-2 py-0.5 text-xs font-mono font-bold text-rose-400 hover:text-white bg-rose-950/70 hover:bg-rose-700 border border-rose-700 rounded transition-all cursor-pointer inline-flex items-center gap-1"
                     onClick={(e) => {
                       e.stopPropagation()
                       if (window.confirm(`Kick player "${player.username}" from the room?`)) {
@@ -85,7 +85,7 @@ export function SquadPanel({
                     title="Kick Player"
                     type="button"
                   >
-                    ✕ KICK
+                    <Icon name="close" size={12} /> KICK
                   </button>
                 )}
               </span>

@@ -6,6 +6,7 @@ import { RoundCoordinatorService } from './services/round-coordinator.service';
 import { GuessEvaluatorService } from './services/guess-evaluator.service';
 import { TimerService } from './services/timer.service';
 import { GeoDatabaseService } from '../geo-database/geo-database.service';
+import { RedisService } from '../redis/redis.service';
 
 @Injectable()
 export class GameService {
@@ -17,6 +18,7 @@ export class GameService {
     public readonly guessEvaluator: GuessEvaluatorService,
     public readonly timerService: TimerService,
     private readonly geoDb: GeoDatabaseService,
+    private readonly redis: RedisService,
   ) {}
 
   getRoom(roomId?: string): GameRoom | null {
@@ -105,17 +107,31 @@ export class GameService {
     if (!targetRoom.recentLocationKeys) {
       targetRoom.recentLocationKeys = new Set<string>();
     }
-    // Cap recent keys so after many games the pool doesn't get fully exhausted
+    // Cap room recent keys so after many games the room pool doesn't get fully exhausted
     if (targetRoom.recentLocationKeys.size > 1500) {
       targetRoom.recentLocationKeys.clear();
     }
 
+    // Pull global recent keys from Redis to prevent repetition across games/rooms
+    const globalRecent = await this.redis.getRecentLocationKeys(2000);
+    const combinedRecentKeys = new Set<string>([
+      ...targetRoom.recentLocationKeys,
+      ...globalRecent,
+    ]);
+
     targetRoom.selectedLocations = this.roundCoordinator.selectDiverseLocations(
       pool,
       targetRoom.totalRounds,
-      targetRoom.recentLocationKeys,
+      combinedRecentKeys,
       { region: targetRoom.selectedRegion, difficulty: targetRoom.difficulty },
     );
+
+    // Save newly selected locations to global Redis circular buffer
+    const locKeys = targetRoom.selectedLocations.map(
+      (l) => `${l.lat.toFixed(4)},${l.lng.toFixed(4)}`,
+    );
+    const locIds = targetRoom.selectedLocations.filter((l) => l.id).map((l) => String(l.id));
+    await this.redis.pushRecentLocationKeys([...locKeys, ...locIds], 2000);
 
     if (targetRoom.selectedLocations.length === 0) {
       return { success: false, error: 'No locations available to start the match.' };

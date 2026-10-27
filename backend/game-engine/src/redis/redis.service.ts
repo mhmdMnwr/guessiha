@@ -72,4 +72,28 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
       this.logger.warn(`Failed caching round target: ${err.message}`);
     }
   }
+
+  async pushRecentLocationKeys(keys: string[], maxHistory = 2000): Promise<void> {
+    if (!this.client || !keys || keys.length === 0) return;
+    try {
+      const pipeline = this.client.pipeline();
+      pipeline.lpush('global:recent_locations', ...keys);
+      pipeline.ltrim('global:recent_locations', 0, maxHistory - 1);
+      pipeline.expire('global:recent_locations', 86400 * 3);
+      await pipeline.exec();
+    } catch (err: any) {
+      this.logger.warn(`Failed pushing recent locations: ${err.message}`);
+    }
+  }
+
+  async getRecentLocationKeys(limit = 2000): Promise<Set<string>> {
+    if (!this.client) return new Set<string>();
+    try {
+      const items = await this.client.lrange('global:recent_locations', 0, limit - 1);
+      return new Set(items);
+    } catch (err: any) {
+      this.logger.warn(`Failed getting recent locations: ${err.message}`);
+      return new Set<string>();
+    }
+  }
 }

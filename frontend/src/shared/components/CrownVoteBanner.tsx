@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import type { CrownVoteNotice } from "../../types/game"
+import { Icon } from "./Icon"
 
 interface CrownVoteBannerProps {
   voteNotice: CrownVoteNotice
@@ -50,7 +51,9 @@ export default function CrownVoteBanner({
         />
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <span className="text-3xl">🗳️</span>
+            <span className="text-cyan-400">
+              <Icon name="vote" size={28} />
+            </span>
             <div>
               <h2 className="text-sm font-mono font-bold uppercase tracking-wider text-cyan-300">
                 Room Referendum // Elect New Leader
@@ -82,24 +85,24 @@ export default function CrownVoteBanner({
             ) : (
               <>
                 <button
-                  className="flex-1 sm:flex-initial px-3 py-1.5 text-xs font-mono font-bold uppercase tracking-wider rounded border border-rose-500/80 bg-rose-950/80 hover:bg-rose-900 text-rose-200 hover:text-white transition-all cursor-pointer"
+                  className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-mono font-bold uppercase tracking-wider rounded border border-rose-500/80 bg-rose-950/80 hover:bg-rose-900 text-rose-200 hover:text-white transition-all cursor-pointer"
                   onClick={() => {
                     setMyVote("no")
                     onVote("no")
                   }}
                   type="button"
                 >
-                  👎 NO
+                  <Icon name="thumbsDown" size={14} /> NO
                 </button>
                 <button
-                  className="flex-1 sm:flex-initial px-3 py-1.5 text-xs font-mono font-bold uppercase tracking-wider rounded border border-emerald-500 bg-emerald-600 hover:bg-emerald-500 text-white font-black transition-all cursor-pointer shadow-[0_0_12px_rgba(16,185,129,0.4)]"
+                  className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-mono font-bold uppercase tracking-wider rounded border border-emerald-500 bg-emerald-600 hover:bg-emerald-500 text-white font-black transition-all cursor-pointer shadow-[0_0_12px_rgba(16,185,129,0.4)]"
                   onClick={() => {
                     setMyVote("yes")
                     onVote("yes")
                   }}
                   type="button"
                 >
-                  👍 YES
+                  <Icon name="thumbsUp" size={14} /> YES
                 </button>
               </>
             )}

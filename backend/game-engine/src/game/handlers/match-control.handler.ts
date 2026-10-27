@@ -34,7 +34,7 @@ export class MatchControlHandler {
       (room.hostSocketId && socket.id === room.hostSocketId);
 
     if (!isAuthorized) {
-      socket.emit('error_message', { message: 'Only the squad leader 👑 can advance to the next round.' });
+      socket.emit('error_message', { message: 'Only the room host can advance to the next round.' });
       return;
     }
 

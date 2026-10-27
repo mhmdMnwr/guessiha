@@ -1,4 +1,5 @@
 import { GameButton } from "../../../shared/components/GameButton"
+import { Icon } from "../../../shared/components/Icon"
 import { LeafletMapView } from "./LeafletMapView"
 import { RoundResultsLeaderboard } from "./RoundResultsLeaderboard"
 import type { Coordinates } from "../../../types/game"
@@ -59,7 +60,7 @@ export function RoundResultsView({
           </div>
 
           <div className="result-location">
-            <span>🎯 ACTUAL: </span>
+            <span className="inline-flex items-center gap-1.5"><Icon name="target" size={15} /> ACTUAL: </span>
             <span className="text-slate-200">{actualLabel}</span>
           </div>
 
@@ -71,7 +72,13 @@ export function RoundResultsView({
             <span>
               <small>CLOSEST EXPLORER</small>
               <strong className="text-[#43dcff] truncate">
-                {closestPlayer?.username ? `👑 ${closestPlayer.username}` : "NONE"}
+                {closestPlayer?.username ? (
+                  <span className="inline-flex items-center gap-1">
+                    <Icon name="crown" size={14} /> {closestPlayer.username}
+                  </span>
+                ) : (
+                  "NONE"
+                )}
               </strong>
               {closestPlayer?.distanceKm != null && (
                 <span className="text-xs font-mono text-slate-400 mt-0.5">
@@ -107,8 +114,8 @@ export function RoundResultsView({
           ) : (
             <div className="w-full py-3 px-4 bg-slate-900/95 border border-slate-700/80 rounded-xl flex items-center justify-center gap-2.5">
               <span className="inline-block w-2.5 h-2.5 bg-amber-400 rounded-full animate-ping" />
-              <span className="text-xs font-mono text-amber-300 font-bold uppercase tracking-wider">
-                WAITING FOR HOST 👑 TO ADVANCE
+              <span className="text-xs font-mono text-amber-300 font-bold uppercase tracking-wider inline-flex items-center gap-1.5">
+                WAITING FOR HOST <Icon name="crown" size={13} /> TO ADVANCE
               </span>
             </div>
           )}

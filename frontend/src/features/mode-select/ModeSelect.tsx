@@ -95,17 +95,17 @@ export function ModeSelect({
             />
             <button
               type="button"
-              className="username-random-btn"
+              className="username-random-btn flex items-center justify-center text-slate-300 hover:text-white"
               onClick={handleRandomizeName}
               title="Generate random name"
             >
-              🎲
+              <Icon name="dice" size={18} />
             </button>
           </div>
 
           {usernameError && (
-            <div className="mt-4 p-3 bg-rose-950/90 border border-rose-500 rounded-lg text-rose-300 text-xs font-mono">
-              ⚠ {usernameError}
+            <div className="mt-4 p-3 bg-rose-950/90 border border-rose-500 rounded-lg text-rose-300 text-xs font-mono inline-flex items-center gap-1.5 w-full">
+              <Icon name="warning" size={14} /> {usernameError}
             </div>
           )}
 

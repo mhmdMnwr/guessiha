@@ -33,7 +33,7 @@ export class RoundCoordinatorService {
   }
 
   private pickWeightedCountry(countries: string[]): string {
-    const weights = countries.map((c) => COUNTRY_TIER_WEIGHTS[c] ?? 1.5);
+    const weights = countries.map((c) => COUNTRY_TIER_WEIGHTS[c] ?? 1.2);
     const totalWeight = weights.reduce((acc, w) => acc + w, 0);
     let roll = Math.random() * totalWeight;
     for (let i = 0; i < countries.length; i++) {
@@ -71,7 +71,7 @@ export class RoundCoordinatorService {
     const locKey = (l: GeoLocation) => `${l.lat.toFixed(4)},${l.lng.toFixed(4)}`;
     const freshPool =
       recentKeys && recentKeys.size > 0
-        ? pool.filter((l) => !recentKeys.has(locKey(l)))
+        ? pool.filter((l) => !recentKeys.has(locKey(l)) && (!l.id || !recentKeys.has(String(l.id))))
         : pool;
     const candidatePool = freshPool.length >= count ? freshPool : pool;
 
@@ -197,6 +197,7 @@ export class RoundCoordinatorService {
     if (recentKeys) {
       for (const loc of selected) {
         recentKeys.add(locKey(loc));
+        if (loc.id) recentKeys.add(String(loc.id));
       }
     }
     return selected;

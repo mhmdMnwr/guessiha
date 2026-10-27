@@ -52,8 +52,18 @@ export function AtlasView({
           <span>STREET VIEW</span>
         </button>
 
-        <span className="atlas-pin-status">
-          {hasGuessed ? "✓ LOCKED" : myPin ? "📍 PIN PLACED" : "TAP MAP"}
+        <span className="atlas-pin-status inline-flex items-center gap-1.5">
+          {hasGuessed ? (
+            <>
+              <Icon name="check" size={14} /> LOCKED
+            </>
+          ) : myPin ? (
+            <>
+              <Icon name="pin" size={14} /> PIN PLACED
+            </>
+          ) : (
+            "TAP MAP"
+          )}
         </span>
       </header>
 
@@ -91,8 +101,9 @@ export function AtlasView({
           <MobileTimerPill countdownSeconds={countdownSeconds} />
         )}
         {hasGuessed ? (
-          <div className="atlas-locked-pill flex-1 text-center">
-            <span>✓ GUESS LOCKED // WAITING FOR PLAYERS</span>
+          <div className="atlas-locked-pill flex-1 text-center inline-flex items-center justify-center gap-1.5">
+            <Icon name="check" size={14} />
+            <span>GUESS LOCKED // WAITING FOR PLAYERS</span>
           </div>
         ) : (
           <GameButton

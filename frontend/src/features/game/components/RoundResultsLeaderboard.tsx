@@ -1,3 +1,5 @@
+import { Icon } from "../../../shared/components/Icon"
+
 interface RoundResultsLeaderboardProps {
   currentLeaderboard: any[]
   currentRound: number
@@ -31,12 +33,22 @@ export function RoundResultsLeaderboard({
               key={player.username}
             >
               <span className="round-rank font-mono text-xs font-bold text-slate-400">
-                {player.rank === 1 ? "👑 01" : String(player.rank).padStart(2, "0")}
+                {player.rank === 1 ? (
+                  <span className="inline-flex items-center gap-1 text-amber-400">
+                    <Icon name="crown" size={13} /> 01
+                  </span>
+                ) : (
+                  String(player.rank).padStart(2, "0")
+                )}
               </span>
               <span className="round-player-name truncate font-semibold text-sm">
                 {player.username}
                 {player.isLocal && <span className="you-pill ml-1.5 text-xs font-mono text-sky-400 font-bold">[YOU]</span>}
-                {player.isHost && <span className="host-pill ml-1 text-xs font-mono text-amber-400 font-bold">👑</span>}
+                {player.isHost && (
+                  <span className="host-pill ml-1 inline-flex items-center text-amber-400" title="Room Host">
+                    <Icon name="crown" size={12} />
+                  </span>
+                )}
               </span>
               <span className="round-player-dist font-mono text-xs text-slate-400">
                 {player.distanceKm != null ? `${Math.round(player.distanceKm)} km` : "MISSED"}

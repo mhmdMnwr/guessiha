@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import type { CrownDemandNotice } from "../../types/game"
+import { Icon } from "./Icon"
 
 interface CrownDemandBannerProps {
   demandNotice: CrownDemandNotice
@@ -42,7 +43,9 @@ export default function CrownDemandBanner({
         />
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <span className="text-3xl animate-bounce">👑</span>
+            <span className="text-amber-400 animate-bounce">
+              <Icon name="crown" size={30} />
+            </span>
             <div>
               <h2 className="text-sm font-mono font-bold uppercase tracking-wider text-amber-300">
                 Host Challenge // Crown Demanded
@@ -64,11 +67,11 @@ export default function CrownDemandBanner({
               Refuse
             </button>
             <button
-              className="flex-1 sm:flex-initial px-3 py-1.5 text-xs font-mono font-bold uppercase tracking-wider rounded border border-amber-400 bg-amber-500 hover:bg-amber-400 text-neutral-950 font-black transition-all cursor-pointer shadow-[0_0_15px_rgba(245,158,11,0.4)]"
+              className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-mono font-bold uppercase tracking-wider rounded border border-amber-400 bg-amber-500 hover:bg-amber-400 text-neutral-950 font-black transition-all cursor-pointer shadow-[0_0_15px_rgba(245,158,11,0.4)]"
               onClick={() => onRespondDemand(true)}
               type="button"
             >
-              Yield Crown 👑
+              <Icon name="crown" size={14} /> Yield Crown
             </button>
           </div>
         </div>

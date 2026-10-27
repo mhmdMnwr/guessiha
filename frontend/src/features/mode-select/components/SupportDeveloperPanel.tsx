@@ -72,8 +72,8 @@ export function SupportDeveloperPanel({
           onClick={() => setShowCoffee(!showCoffee)}
           type="button"
         >
-          <span className="support-action-icon text-amber-400 border-amber-400/40 bg-amber-400/10 text-xl">
-            ☕
+          <span className="support-action-icon text-amber-400 border-amber-400/40 bg-amber-400/10">
+            <Icon name="coffee" size={20} />
           </span>
           <div className="flex-1 min-w-0">
             <strong className="block text-sm font-bold tracking-wider uppercase text-white">

@@ -6,20 +6,36 @@ export type IconName =
   | "chart"
   | "check"
   | "clock"
+  | "close"
+  | "coffee"
   | "copy"
   | "crown"
+  | "dice"
   | "globe"
   | "heart"
-  | "network"
+  | "hourglass"
+  | "lightning"
+  | "lock"
   | "map"
   | "message"
+  | "network"
+  | "pin"
   | "play"
   | "players"
   | "plus"
   | "radar"
   | "researcher"
+  | "scale"
   | "settings"
   | "shield"
+  | "star"
+  | "swords"
+  | "target"
+  | "thumbsDown"
+  | "thumbsUp"
+  | "trophy"
+  | "vote"
+  | "warning"
 
 const iconPaths: Record<IconName, React.ReactNode> = {
   arrow: <path d="M5 12h14M13 6l6 6-6 6" />,
@@ -37,6 +53,12 @@ const iconPaths: Record<IconName, React.ReactNode> = {
       <path d="M12 7v5l3.5 2" />
     </>
   ),
+  close: <path d="m18 6-12 12M6 6l12 12" />,
+  coffee: (
+    <>
+      <path d="M17 8h1a4 4 0 0 1 0 8h-1M3 8h14v8a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8ZM6 2v3M10 2v3M14 2v3" />
+    </>
+  ),
   copy: (
     <>
       <rect height="10" rx="2" width="10" x="8" y="8" />
@@ -44,6 +66,16 @@ const iconPaths: Record<IconName, React.ReactNode> = {
     </>
   ),
   crown: <path d="M3 18h18l-2-11-5 5-2-7-2 7-5-5-2 11Z" />,
+  dice: (
+    <>
+      <rect height="16" rx="3" width="16" x="4" y="4" />
+      <circle cx="8.5" cy="8.5" fill="currentColor" r="1.2" stroke="none" />
+      <circle cx="15.5" cy="8.5" fill="currentColor" r="1.2" stroke="none" />
+      <circle cx="12" cy="12" fill="currentColor" r="1.2" stroke="none" />
+      <circle cx="8.5" cy="15.5" fill="currentColor" r="1.2" stroke="none" />
+      <circle cx="15.5" cy="15.5" fill="currentColor" r="1.2" stroke="none" />
+    </>
+  ),
   globe: (
     <>
       <circle cx="12" cy="12" r="9" />
@@ -52,6 +84,68 @@ const iconPaths: Record<IconName, React.ReactNode> = {
   ),
   heart: (
     <path d="M19.5 12.6 12 20l-7.5-7.4A5 5 0 0 1 12 5.6a5 5 0 0 1 7.5 7Z" />
+  ),
+  hourglass: (
+    <>
+      <path d="M5 22h14M5 2h14M17 22v-4a5 5 0 0 0-2.5-4.3L12 12l-2.5 1.7A5 5 0 0 0 7 18v4M7 2v4a5 5 0 0 0 2.5 4.3L12 12l2.5-1.7A5 5 0 0 0 17 6V2" />
+    </>
+  ),
+  lightning: <polygon fill="currentColor" points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />,
+  lock: (
+    <>
+      <rect height="11" rx="2" width="16" x="4" y="10" />
+      <circle cx="12" cy="15.5" r="1.5" />
+      <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+    </>
+  ),
+  pin: (
+    <>
+      <path d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7Z" />
+      <circle cx="12" cy="9" r="2.5" />
+    </>
+  ),
+  scale: (
+    <>
+      <path d="m16 16 3-7 3 7c-.8.6-1.8 1-3 1s-2.2-.4-3-1ZM2 16l3-7 3 7c-.8.6-1.8 1-3 1s-2.2-.4-3-1ZM12 3v18M8 21h8M4 7h16" />
+    </>
+  ),
+  star: (
+    <polygon fill="currentColor" points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+  ),
+  swords: (
+    <>
+      <path d="M14.5 17.5 3 6V3h3l11.5 11.5M13 19l6 2 2-6-2.5-2.5-5.5 5.5v1ZM9.5 6.5 21 18v3h-3L6.5 9.5" />
+    </>
+  ),
+  target: (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <circle cx="12" cy="12" r="5" />
+      <circle cx="12" cy="12" fill="currentColor" r="1.5" stroke="none" />
+      <path d="M12 2v3M12 19v3M2 12h3M19 12h3" />
+    </>
+  ),
+  thumbsDown: (
+    <path d="M7 14V2M15 13.5V18a3 3 0 0 0 3 3l4-7V2H10.7a2 2 0 0 0-2 1.7L7.3 12.1a2 2 0 0 0 2 2.4H15Z" />
+  ),
+  thumbsUp: (
+    <path d="M7 10v12M15 10.5V6a3 3 0 0 0-3-3l-4 7v12h11.3a2 2 0 0 0 2-1.7l1.4-8.4a2 2 0 0 0-2-2.4H15Z" />
+  ),
+  trophy: (
+    <>
+      <path d="M6 9H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h2M18 9h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-2M6 3h12v7a6 6 0 0 1-12 0V3ZM9 21h6M12 16v5" />
+    </>
+  ),
+  vote: (
+    <>
+      <path d="m9 12 2 2 4-4" />
+      <path d="M5 7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V7Z" />
+    </>
+  ),
+  warning: (
+    <>
+      <path d="m10.3 3.2 8.7 15.1A2 2 0 0 1 17.3 21H2.7a2 2 0 0 1-1.7-2.7L9.7 3.2a2 2 0 0 1 3.5 0ZM12 9v4M12 17h.01" />
+    </>
   ),
   network: (
     <>

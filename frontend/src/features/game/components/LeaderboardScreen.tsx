@@ -42,11 +42,23 @@ export function LeaderboardScreen({
                   <strong>
                     {player.username}
                     {player.isLocal && <span className="text-sky-400 text-xs ml-2 font-mono font-bold">[YOU]</span>}
-                    {player.isHost && <span className="text-amber-400 text-xs ml-1 font-bold">👑</span>}
+                    {player.isHost && (
+                      <span className="text-amber-400 text-xs ml-1 inline-flex items-center" title="Host">
+                        <Icon name="crown" size={13} />
+                      </span>
+                    )}
                   </strong>
                   {player.hasGuessed != null && (
-                    <small className={player.hasGuessed ? "text-emerald-400 font-mono font-bold" : "text-amber-400 font-mono"}>
-                      {player.hasGuessed ? "✓ GUESS LOCKED IN" : "⌛ EXPLORING & ESTIMATING"}
+                    <small className={`${player.hasGuessed ? "text-emerald-400 font-bold" : "text-amber-400"} font-mono inline-flex items-center gap-1 mt-0.5`}>
+                      {player.hasGuessed ? (
+                        <>
+                          <Icon name="check" size={12} /> GUESS LOCKED IN
+                        </>
+                      ) : (
+                        <>
+                          <Icon name="hourglass" size={12} /> EXPLORING & ESTIMATING
+                        </>
+                      )}
                     </small>
                   )}
                 </span>

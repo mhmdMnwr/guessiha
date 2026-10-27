@@ -95,7 +95,7 @@ export function ExploreView({
           </span>
           <span className="explore-guess-fab-label">
             {hasGuessed
-              ? "✓ GUESS LOCKED"
+              ? "GUESS LOCKED"
               : myPin
                 ? "PIN SET · CONFIRM GUESS"
                 : "PLACE GUESS"}

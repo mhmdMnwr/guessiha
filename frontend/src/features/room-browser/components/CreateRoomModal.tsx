@@ -64,7 +64,9 @@ export function CreateRoomModal({
       <div className="modal-dialog">
         <div className="modal-header">
           <div className="modal-title"><Icon name="crown" size={22} /> CREATE ROOM</div>
-          <button className="text-slate-400 hover:text-white font-mono text-lg cursor-pointer bg-transparent border-0" onClick={onClose} type="button">✕</button>
+          <button className="text-slate-400 hover:text-white p-1 cursor-pointer bg-transparent border-0 flex items-center justify-center" onClick={onClose} type="button">
+            <Icon name="close" size={18} />
+          </button>
         </div>
 
         <div className="modal-field">
@@ -120,22 +122,22 @@ export function CreateRoomModal({
           <div className="modal-field">
             <label className="modal-label">ROOM VISIBILITY</label>
             <select className="modal-select" onChange={(e) => setIsPrivate(e.target.value === "private")} value={isPrivate ? "private" : "public"}>
-              <option value="public">🌐 PUBLIC</option>
-              <option value="private">🔒 PRIVATE</option>
+              <option value="public">PUBLIC (OPEN)</option>
+              <option value="private">PRIVATE (CODE ONLY)</option>
             </select>
           </div>
         </div>
 
         {error && (
-          <div className="modal-error p-3 my-3 text-xs font-mono text-rose-400 bg-rose-950/70 border border-rose-800 rounded">
-            ⚠ {error}
+          <div className="modal-error p-3 my-3 text-xs font-mono text-rose-400 bg-rose-950/70 border border-rose-800 rounded inline-flex items-center gap-1.5 w-full">
+            <Icon name="warning" size={14} /> {error}
           </div>
         )}
 
         <div className="modal-actions">
           <GameButton disabled={isCreating} onClick={onClose} variant="ghost">CANCEL</GameButton>
           <GameButton disabled={isCreating} icon="crown" onClick={handleSubmit} variant="primary">
-            {isCreating ? "CREATING ROOM..." : "CREATE ROOM 👑"}
+            {isCreating ? "CREATING ROOM..." : "CREATE ROOM"}
           </GameButton>
         </div>
       </div>

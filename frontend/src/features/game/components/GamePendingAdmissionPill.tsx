@@ -1,4 +1,5 @@
 import type { PendingRequest } from "../../../types/game"
+import { Icon } from "../../../shared/components/Icon"
 
 interface GamePendingAdmissionPillProps {
   pendingRequests: PendingRequest[]
@@ -28,20 +29,20 @@ export function GamePendingAdmissionPill({
             </div>
             <div className="game-pending-actions">
               <button
-                className="game-admission-admit-btn"
+                className="game-admission-admit-btn inline-flex items-center gap-1"
                 onClick={() => onAdmitPlayer?.(req.clientId)}
                 title="Admit player into game"
                 type="button"
               >
-                ✓ ADMIT
+                <Icon name="check" size={13} /> ADMIT
               </button>
               <button
-                className="game-admission-reject-btn"
+                className="game-admission-reject-btn inline-flex items-center gap-1"
                 onClick={() => onRejectPlayer?.(req.clientId)}
                 title="Reject request"
                 type="button"
               >
-                ✕ REJECT
+                <Icon name="close" size={13} /> REJECT
               </button>
             </div>
           </div>

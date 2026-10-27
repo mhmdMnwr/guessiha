@@ -107,14 +107,14 @@ export function FeedbackPanel({ username, onBackToPlay }: FeedbackPanelProps) {
         <div className="flex gap-2">
           {[1, 2, 3, 4, 5].map((star) => (
             <button
-              className={`flex-1 py-2 rounded border font-mono text-sm font-bold transition cursor-pointer ${
+              className={`flex-1 py-2 rounded border font-mono text-sm font-bold transition cursor-pointer flex items-center justify-center gap-1 ${
                 rating >= star ? "bg-lime-400/20 border-lime-400 text-lime-300" : "bg-slate-900/80 border-slate-800 text-slate-500"
               }`}
               key={star}
               onClick={() => setRating(star)}
               type="button"
             >
-              ★ {star}
+              <Icon name="star" size={13} /> {star}
             </button>
           ))}
         </div>

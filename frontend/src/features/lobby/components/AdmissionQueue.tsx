@@ -21,25 +21,27 @@ export function AdmissionQueue({ pendingRequests, onAdmit, onReject }: Admission
       <div className="squad-list">
         {pendingRequests.map((req) => (
           <div className="player" key={req.clientId} style={{ justifyContent: "space-between" }}>
-            <span className="player-index">⏳</span>
+            <span className="player-index inline-flex items-center justify-center">
+              <Icon name="hourglass" size={14} />
+            </span>
             <span className="player-info">
               <strong>{req.username}</strong>
               <small>Requesting entry · {new Date(req.requestedAt).toLocaleTimeString()}</small>
             </span>
             <span className="flex items-center gap-2">
               <button
-                className="px-3 py-1 text-xs font-mono font-bold text-emerald-400 border border-emerald-600 rounded hover:bg-emerald-900 transition-all cursor-pointer"
+                className="px-3 py-1 text-xs font-mono font-bold text-emerald-400 border border-emerald-600 rounded hover:bg-emerald-900 transition-all cursor-pointer inline-flex items-center gap-1"
                 onClick={() => onAdmit(req.clientId)}
                 type="button"
               >
-                ✓ ADMIT
+                <Icon name="check" size={12} /> ADMIT
               </button>
               <button
-                className="px-3 py-1 text-xs font-mono font-bold text-rose-400 border border-rose-700 rounded hover:bg-rose-900 transition-all cursor-pointer"
+                className="px-3 py-1 text-xs font-mono font-bold text-rose-400 border border-rose-700 rounded hover:bg-rose-900 transition-all cursor-pointer inline-flex items-center gap-1"
                 onClick={() => onReject(req.clientId)}
                 type="button"
               >
-                ✕ REJECT
+                <Icon name="close" size={12} /> REJECT
               </button>
             </span>
           </div>

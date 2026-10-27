@@ -11,19 +11,31 @@ interface RoomRowProps {
 function renderStatusBadge(room: Room) {
   if (room.status === "ROUND_ACTIVE") {
     return (
-      <span className="status-badge status-badge--active">
-        ⚔ MATCH {room.currentRound ? `(R${room.currentRound}/${room.totalRounds})` : "ACTIVE"}
+      <span className="status-badge status-badge--active inline-flex items-center gap-1.5">
+        <Icon name="swords" size={13} /> MATCH {room.currentRound ? `(R${room.currentRound}/${room.totalRounds})` : "ACTIVE"}
       </span>
     )
   }
   if (room.status === "ROUND_COUNTDOWN") {
-    return <span className="status-badge status-badge--countdown">⏱ COUNTDOWN</span>
+    return (
+      <span className="status-badge status-badge--countdown inline-flex items-center gap-1.5">
+        <Icon name="clock" size={13} /> COUNTDOWN
+      </span>
+    )
   }
   if (room.status === "ROUND_RESULTS") {
-    return <span className="status-badge status-badge--results">📊 SCORING</span>
+    return (
+      <span className="status-badge status-badge--results inline-flex items-center gap-1.5">
+        <Icon name="chart" size={13} /> SCORING
+      </span>
+    )
   }
   if (room.status === "GAME_OVER") {
-    return <span className="status-badge status-badge--ended">🏆 FINISHED</span>
+    return (
+      <span className="status-badge status-badge--ended inline-flex items-center gap-1.5">
+        <Icon name="trophy" size={13} /> FINISHED
+      </span>
+    )
   }
   return <span className="status-badge status-badge--lobby">● OPEN LOBBY</span>
 }
@@ -47,12 +59,12 @@ export function RoomRow({ room, index, onJoin }: RoomRowProps) {
           <strong className="flex items-center gap-2">
             {room.name}
             {room.isPrivate && (
-              <span className="px-1.5 py-0.5 text-[10px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 rounded">
-                🔒 PRIVATE
+              <span className="px-1.5 py-0.5 text-[10px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 rounded inline-flex items-center gap-1">
+                <Icon name="lock" size={11} /> PRIVATE
               </span>
             )}
-            <span className="text-amber-400 text-xs font-normal">
-              👑 {room.hostName}
+            <span className="text-amber-400 text-xs font-normal inline-flex items-center gap-1">
+              <Icon name="crown" size={12} /> {room.hostName}
             </span>
           </strong>
           <small className="font-mono text-cyan-400">CODE: {room.code || room.id}</small>

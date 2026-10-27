@@ -49,7 +49,14 @@ export function renderRoundResultOverlays(
     html: `
       <div class="target-marker-container">
         <div class="target-radar-ring"></div>
-        <div class="target-icon-core">🎯</div>
+        <div class="target-icon-core">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="9"/>
+            <circle cx="12" cy="12" r="5"/>
+            <circle cx="12" cy="12" r="1.5" fill="currentColor"/>
+            <path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>
+          </svg>
+        </div>
         <div class="target-label-bubble">ACTUAL: ${safeTargetLabel}</div>
       </div>
     `,
@@ -87,19 +94,19 @@ export function renderRoundResultOverlays(
     const metaParts = [distLabel, scoreLabel].filter(Boolean).join(" • ")
     const metaStr = metaParts ? ` (${metaParts})` : ""
     const badgeClass = guess.isClosest ? "beacon-closest" : guess.isLocal ? "beacon-local" : "beacon-other"
-    const badgeTitle = guess.isClosest
-      ? `👑 ${guess.username}${metaStr}`
-      : guess.isLocal
-        ? `YOU${metaStr}`
-        : `${guess.username}${metaStr}`
-    const safeBadgeTitle = escapeHtml(badgeTitle)
+    const safeUsername = escapeHtml(guess.isLocal ? "YOU" : guess.username)
+    const safeMetaStr = escapeHtml(metaStr)
+    const crownSvg = guess.isClosest
+      ? `<svg style="display:inline-block;vertical-align:-2px;margin-right:4px;" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 18h18l-2-11-5 5-2-7-2 7-5-5-2 11Z"/></svg>`
+      : ""
+    const badgeHtml = `${crownSvg}${safeUsername}${safeMetaStr}`
 
     const playerIcon = L.divIcon({
       className: `custom-guess-marker ${badgeClass}`,
       html: `
         <div class="guess-marker-container ${badgeClass}">
           <div class="guess-dot"></div>
-          <div class="guess-label-bubble">${safeBadgeTitle}</div>
+          <div class="guess-label-bubble">${badgeHtml}</div>
         </div>
       `,
       iconSize: [28, 28],

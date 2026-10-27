@@ -85,7 +85,9 @@ export function RoomBrowser({
 
         {errorMessage && (
           <div className="mb-4 p-3 bg-rose-950/90 border border-rose-700 rounded-lg text-rose-300 font-mono text-sm flex items-center gap-3">
-            <span className="text-rose-400 font-bold">⚠ ACCESS DENIED:</span>
+            <span className="text-rose-400 font-bold inline-flex items-center gap-1.5">
+              <Icon name="warning" size={16} /> ACCESS DENIED:
+            </span>
             <span>{errorMessage}</span>
           </div>
         )}

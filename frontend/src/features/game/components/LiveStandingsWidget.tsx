@@ -1,3 +1,5 @@
+import { Icon } from "../../../shared/components/Icon"
+
 interface LiveStandingsWidgetProps {
   leaderboard: any[]
   currentRound: number
@@ -42,7 +44,13 @@ export function LiveStandingsWidget({
           >
             <div className="flex items-center gap-2 min-w-0">
               <span className="live-rank font-mono text-xs font-bold text-slate-400">
-                {p.rank === 1 ? "👑" : `#${p.rank}`}
+                {p.rank === 1 ? (
+                  <span className="inline-flex items-center text-amber-400">
+                    <Icon name="crown" size={13} />
+                  </span>
+                ) : (
+                  `#${p.rank}`
+                )}
               </span>
               <span className="live-name truncate text-xs font-semibold text-slate-200">
                 {p.username}
@@ -53,13 +61,21 @@ export function LiveStandingsWidget({
             </div>
             <div className="flex items-center gap-2 shrink-0">
               <span
-                className={`live-guess-pill font-mono text-[10px] font-bold px-1.5 py-0.5 rounded ${
+                className={`live-guess-pill font-mono text-[10px] font-bold px-1.5 py-0.5 rounded inline-flex items-center gap-1 ${
                   p.hasGuessed
                     ? "bg-[#c7ff3d]/15 text-[#c7ff3d] border border-[#c7ff3d]/40"
                     : "bg-[#43dcff]/10 text-[#43dcff] border border-[#43dcff]/30 animate-pulse"
                 }`}
               >
-                {p.hasGuessed ? "✓ LOCKED" : "⌛ THINKING"}
+                {p.hasGuessed ? (
+                  <>
+                    <Icon name="check" size={11} /> LOCKED
+                  </>
+                ) : (
+                  <>
+                    <Icon name="hourglass" size={11} /> THINKING
+                  </>
+                )}
               </span>
               <span className="live-score font-mono text-xs font-bold text-[#43dcff]">
                 {(p.totalScore || 0).toLocaleString()}
